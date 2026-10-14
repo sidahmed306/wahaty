@@ -1,0 +1,19 @@
+# Environnement Python
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# Tests / couverture
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# Fichiers locaux
+media/
+staticfiles/
+.DS_Store
+.vscode/
