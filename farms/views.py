@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from accounts.models import Role
 from core.access import can_write_for
-from core.mixins import OwnedQuerysetMixin
+from core.mixins import OwnedQuerysetMixin, SoftDeleteMixin
 from core.permissions import OwnerPermission, role_permission
 
 from .filters import FarmFilter, HarvestFilter, PalmGroupFilter
@@ -31,12 +31,6 @@ NOT_YOURS = "Vous ne pouvez pas saisir de données pour cette ferme."
 
 def active_sum(field):
     return Coalesce(Sum(f"palm_groups__{field}", filter=Q(palm_groups__is_active=True)), 0)
-
-
-class SoftDeleteMixin:
-    def perform_destroy(self, instance):
-        instance.is_active = False
-        instance.save(update_fields=["is_active", "updated_at"])
 
 
 class FarmViewSet(SoftDeleteMixin, OwnedQuerysetMixin, viewsets.ModelViewSet):

@@ -7,6 +7,14 @@ from .access import can_write_for, filter_readable, is_field_agent
 from .permissions import OwnerPermission
 
 
+class SoftDeleteMixin:
+    """DELETE désactive la ligne (is_active=False) au lieu de l'effacer."""
+
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save(update_fields=["is_active", "updated_at"])
+
+
 class OwnedQuerysetMixin:
     """À mettre sur chaque vue de données privées.
 

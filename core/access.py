@@ -39,6 +39,15 @@ def filter_readable(queryset, user, owner_field="owner"):
     return queryset if condition is None else queryset.filter(condition)
 
 
+def can_read_for(user, owner):
+    """`user` peut-il lire les données appartenant à `owner` ?"""
+    if not user.is_authenticated or owner is None:
+        return False
+    if is_direction(user) or owner.pk == user.pk:
+        return True
+    return is_field_agent(user) and managed_farmers(user).filter(pk=owner.pk).exists()
+
+
 def can_write_for(user, owner):
     """`user` peut-il créer ou modifier des données appartenant à `owner` ?"""
     if not user.is_authenticated or owner is None:
