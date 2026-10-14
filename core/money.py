@@ -7,6 +7,16 @@ from django.db import models
 
 CENT = Decimal("0.01")
 MONEY_DIGITS = 12  # jusqu'à 9 999 999 999,99 MRU
+MAX_MONEY = Decimal(10 ** (MONEY_DIGITS - 2)) - CENT
+
+
+class PaymentMethod(models.TextChoices):
+    CASH = "cash", "Espèces"
+    BANKILY = "bankily", "Bankily"
+    MASRVI = "masrvi", "Masrvi"
+    SEDAD = "sedad", "Sedad"
+    BANK_TRANSFER = "bank_transfer", "Virement bancaire"
+    OTHER = "other", "Autre"
 
 
 def round_money(value):

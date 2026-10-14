@@ -1,29 +1,13 @@
-from decimal import Decimal
-
-from django.utils import timezone
 from rest_framework import serializers
 
 from core.access import filter_readable
-from core.money import CENT, MONEY_DIGITS, round_money
+from core.fields import money_field, not_in_future
+from core.money import CENT, MAX_MONEY, round_money
 from farms.models import Farm
 from oases.models import DateVariety
 from oases.serializers import VarietyShortSerializer
 
 from .models import Expense, ExpenseCategory, Sale
-
-MAX_MONEY = Decimal(10 ** (MONEY_DIGITS - 2)) - CENT
-
-
-def money_field(**kwargs):
-    return serializers.DecimalField(
-        max_digits=MONEY_DIGITS, decimal_places=2, min_value=CENT, **kwargs
-    )
-
-
-def not_in_future(value):
-    if value > timezone.localdate():
-        raise serializers.ValidationError("La date ne peut pas être dans le futur.")
-    return value
 
 
 class ExpenseCategorySerializer(serializers.ModelSerializer):
