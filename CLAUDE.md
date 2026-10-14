@@ -5,7 +5,8 @@ Répondre en **français**, avec des explications simples. Ce fichier contient l
 ## Décisions prises avec l'utilisateur (14 octobre 2026)
 
 - Environnement Python : `python3.12 -m venv .venv` (pas de uv ni pyenv).
-- PostgreSQL local : Postgres.app **version 18** (celle qui est installée), au lieu de 16. Choisir la même version majeure sur Neon au déploiement.
+- **Base de la plateforme : Neon** (projet `wahaty`, PostgreSQL 18, région Frankfurt), adresse dans `DATABASE_URL`. L'utilisateur ne veut pas de base locale pour la plateforme.
+- **Tests automatiques : PostgreSQL local** (Postgres.app 18), adresse dans `TEST_DATABASE_URL`, via `config/settings_test.py`. Les tests ne touchent jamais Neon.
 - Dépôt GitHub : `sidahmed306/wahaty` (public). Ne jamais y mettre de secret.
 - L'ancien plan basé sur Supabase est abandonné : on suit uniquement ce cahier (Django).
 - Schéma de la base validé (T02) : [docs/T02-schema-base.md](docs/T02-schema-base.md). Il fait foi pour les modèles (il remplace la section 5 ci-dessous quand ils diffèrent).
