@@ -10,3 +10,6 @@ from .settings import *  # noqa: F403
 from .settings import env
 
 DATABASES = {"default": env.db("TEST_DATABASE_URL")}
+
+# Hachage rapide pour accélérer les tests (jamais utilisé par la plateforme).
+PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]

@@ -15,3 +15,11 @@ select = ["E", "F", "I", "B", "UP", "DJ"]
 DJANGO_SETTINGS_MODULE = "config.settings_test"
 python_files = ["test_*.py", "tests.py"]
 testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["accounts", "core", "config"]
+omit = ["*/migrations/*", "config/asgi.py", "config/wsgi.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
