@@ -6,5 +6,5 @@ admin.site.site_title = "Wahaty"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/auth/", include("accounts.urls")),
+    path("api/", include("accounts.urls")),
 ]

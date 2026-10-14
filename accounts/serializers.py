@@ -129,5 +129,42 @@ class MeSerializer(serializers.ModelSerializer):
         return instance
 
 
+class UserManageSerializer(serializers.ModelSerializer):
+    """Vue Direction d'un compte : seuls le statut et l'activation sont modifiables."""
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "phone",
+            "full_name",
+            "roles",
+            "preferred_language",
+            "status",
+            "is_active",
+            "registered_by",
+            "claimed_at",
+            "date_joined",
+            "last_login",
+        ]
+        read_only_fields = [f for f in fields if f not in ("status", "is_active")]
+
+
+class ManagedFarmerSerializer(serializers.ModelSerializer):
+    """Agriculteur vu par l'agent qui l'a inscrit."""
+
+    can_edit = serializers.SerializerMethodField(
+        help_text="Faux si l'agriculteur a repris la main."
+    )
+
+    class Meta:
+        model = User
+        fields = ["id", "phone", "full_name", "status", "claimed_at", "date_joined", "can_edit"]
+        read_only_fields = fields
+
+    def get_can_edit(self, obj):
+        return obj.claimed_at is None
+
+
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()

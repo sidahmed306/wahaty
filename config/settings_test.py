@@ -7,7 +7,10 @@ aux données réelles ni consommer les heures gratuites de Neon.
 """
 
 from .settings import *  # noqa: F403
-from .settings import env
+from .settings import INSTALLED_APPS, env
+
+# Application factice (table « Note ») pour tester l'isolation des données.
+INSTALLED_APPS = [*INSTALLED_APPS, "tests.testapp"]
 
 DATABASES = {"default": env.db("TEST_DATABASE_URL")}
 
