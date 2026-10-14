@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Q
 from rest_framework import generics, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -12,9 +13,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from core.access import managed_farmers
 from core.permissions import IsDirection, IsFieldAgent
 
+from .claims import ClaimError, claim_account, new_claim_code
 from .models import AccountStatus, User
 from .serializers import (
+    AgentFarmerCreateSerializer,
     ApprovedTokenRefreshSerializer,
+    ClaimAccountSerializer,
+    ClaimCodeSerializer,
     LogoutSerializer,
     ManagedFarmerSerializer,
     MeSerializer,
@@ -113,14 +118,63 @@ class UserManageViewSet(
         return self._set_status(request, AccountStatus.SUSPENDED)
 
 
-class ManagedFarmerViewSet(viewsets.ReadOnlyModelViewSet):
-    """Agent de terrain : les agriculteurs qu'il a inscrits."""
+class ManagedFarmerViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
+    """Agent de terrain : inscrire un agriculteur et lister ceux qu'il a inscrits.
 
-    serializer_class = ManagedFarmerSerializer
+    À l'inscription, la réponse contient un **code de reprise** (affiché une seule fois)
+    que l'agent remet à l'agriculteur pour qu'il prenne la main sur son compte.
+    """
+
     permission_classes = [IsFieldAgent]
 
     def get_queryset(self):
         return managed_farmers(self.request.user).order_by("full_name")
+
+    def get_serializer_class(self):
+        return AgentFarmerCreateSerializer if self.action == "create" else ManagedFarmerSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        with transaction.atomic():
+            farmer = serializer.save()
+            code, expires_at = new_claim_code(farmer, request.user)
+        data = {
+            **ManagedFarmerSerializer(farmer).data,
+            **ClaimCodeSerializer({"claim_code": code, "claim_code_expires_at": expires_at}).data,
+        }
+        return Response(data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"], url_path="claim-code")
+    def claim_code(self, request, pk=None):
+        """Nouveau code de reprise (l'ancien ne marche plus). Impossible après la reprise."""
+        farmer = self.get_object()
+        try:
+            code, expires_at = new_claim_code(farmer, request.user)
+        except ClaimError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            ClaimCodeSerializer({"claim_code": code, "claim_code_expires_at": expires_at}).data
+        )
+
+
+class ClaimAccountView(APIView):
+    """L'agriculteur reprend la main : téléphone + code de reprise + nouveau mot de passe."""
+
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+    throttle_scope = "login"
+
+    def post(self, request):
+        serializer = ClaimAccountSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            claim_account(**serializer.validated_data)
+        except ClaimError as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"detail": "Compte repris. Vous pouvez vous connecter avec votre mot de passe."}
+        )
 
 
 class MePhotoView(APIView):

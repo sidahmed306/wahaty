@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "core",
     "accounts",
     "oases",
+    "farms",
 ]
 
 AUTH_USER_MODEL = "accounts.User"

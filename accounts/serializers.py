@@ -12,7 +12,7 @@ from core.images import validate_image_size
 from oases.models import Oasis
 
 from .authentication import check_account_status
-from .models import SELF_SIGNUP_ROLES, Profile, User, validate_roles
+from .models import SELF_SIGNUP_ROLES, Profile, Role, User, validate_roles
 from .phone import normalize_phone
 
 
@@ -180,6 +180,62 @@ class ManagedFarmerSerializer(serializers.ModelSerializer):
 
     def get_can_edit(self, obj):
         return obj.claimed_at is None
+
+
+class AgentFarmerCreateSerializer(serializers.ModelSerializer):
+    """Un agent de terrain inscrit un agriculteur (sans mot de passe : code de reprise)."""
+
+    oasis = serializers.PrimaryKeyRelatedField(
+        queryset=Oasis.objects.filter(is_active=True), required=False, allow_null=True
+    )
+
+    class Meta:
+        model = User
+        fields = ["id", "phone", "full_name", "preferred_language", "oasis", "status"]
+        read_only_fields = ["id", "status"]
+
+    def validate_phone(self, value):
+        phone = clean_phone(value)
+        if User.objects.filter(phone=phone).exists():
+            raise serializers.ValidationError("Ce numéro est déjà utilisé.")
+        return phone
+
+    def create(self, validated_data):
+        oasis = validated_data.pop("oasis", None)
+        user = User.objects.create_user(
+            password=None,
+            roles=[Role.FARMER],
+            registered_by=self.context["request"].user,
+            **validated_data,
+        )
+        if oasis:
+            user.profile.oasis = oasis
+            user.profile.save(update_fields=["oasis", "updated_at"])
+        return user
+
+
+class ClaimCodeSerializer(serializers.Serializer):
+    claim_code = serializers.CharField(
+        help_text="À remettre à l'agriculteur. Affiché une seule fois."
+    )
+    claim_code_expires_at = serializers.DateTimeField()
+
+
+class ClaimAccountSerializer(serializers.Serializer):
+    phone = serializers.CharField()
+    code = serializers.CharField()
+    password = serializers.CharField(write_only=True, style={"input_type": "password"})
+
+    def validate_phone(self, value):
+        return clean_phone(value)
+
+    def validate(self, attrs):
+        user = User.objects.filter(phone=attrs["phone"]).first()
+        try:
+            validate_password(attrs["password"], user=user)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError({"password": exc.messages}) from exc
+        return attrs
 
 
 class LogoutSerializer(serializers.Serializer):

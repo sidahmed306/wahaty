@@ -10,6 +10,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("accounts.urls")),
     path("api/", include("oases.urls")),
+    path("api/", include("farms.urls")),
 ]
 
 if settings.DEBUG:  # pragma: no cover – en local seulement : afficher les photos

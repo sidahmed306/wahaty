@@ -139,6 +139,29 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.status == AccountStatus.APPROVED
 
 
+class AccountClaim(models.Model):
+    """Code de reprise remis par l'agent à l'agriculteur qu'il a inscrit.
+
+    L'agriculteur s'en sert une seule fois pour choisir son mot de passe et prendre la main
+    sur son compte ; l'agent passe alors en lecture seule. Le code est stocké haché.
+    """
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="claim")
+    code_hash = models.CharField(max_length=128)
+    expires_at = models.DateTimeField("expire le")
+    created_by = models.ForeignKey(
+        User, on_delete=models.PROTECT, related_name="claim_codes_created"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "code de reprise"
+        verbose_name_plural = "codes de reprise"
+
+    def __str__(self):
+        return f"Code de reprise de {self.user}"
+
+
 class Profile(ResizedImageMixin, TimeStampedModel):
     """Informations complémentaires du compte."""
 
