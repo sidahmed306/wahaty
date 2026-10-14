@@ -2,6 +2,7 @@ from django.db.models import Q
 from rest_framework import generics, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
@@ -18,6 +19,7 @@ from .serializers import (
     ManagedFarmerSerializer,
     MeSerializer,
     PhoneTokenObtainPairSerializer,
+    ProfilePhotoSerializer,
     RegisterSerializer,
     UserManageSerializer,
 )
@@ -119,6 +121,25 @@ class ManagedFarmerViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return managed_farmers(self.request.user).order_by("full_name")
+
+
+class MePhotoView(APIView):
+    """Ma photo de profil : PUT (multipart, champ « photo ») pour la changer, DELETE l'efface."""
+
+    parser_classes = [MultiPartParser, FormParser]
+
+    def put(self, request):
+        profile = request.user.profile
+        serializer = ProfilePhotoSerializer(profile, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if profile.photo:
+            profile.photo.delete(save=False)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request):
+        request.user.profile.photo.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class MeView(generics.RetrieveUpdateAPIView):

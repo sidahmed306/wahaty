@@ -8,6 +8,9 @@ from rest_framework_simplejwt.serializers import (
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from core.images import validate_image_size
+from oases.models import Oasis
+
 from .authentication import check_account_status
 from .models import SELF_SIGNUP_ROLES, Profile, User, validate_roles
 from .phone import normalize_phone
@@ -84,12 +87,25 @@ class ApprovedTokenRefreshSerializer(TokenRefreshSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    oasis = serializers.PrimaryKeyRelatedField(
+        queryset=Oasis.objects.filter(is_active=True), allow_null=True, required=False
+    )
+
     class Meta:
         model = Profile
-        fields = ["whatsapp", "address", "business_name"]
+        fields = ["oasis", "photo", "whatsapp", "address", "business_name"]
+        read_only_fields = ["photo"]
 
     def validate_whatsapp(self, value):
         return clean_phone(value) if value else value
+
+
+class ProfilePhotoSerializer(serializers.ModelSerializer):
+    photo = serializers.ImageField(validators=[validate_image_size])
+
+    class Meta:
+        model = Profile
+        fields = ["photo"]
 
 
 class MeSerializer(serializers.ModelSerializer):

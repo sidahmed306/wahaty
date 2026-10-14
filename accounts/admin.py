@@ -43,7 +43,7 @@ class UserChangeAdminForm(RolesFormMixin, UserChangeForm):
 class ProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
-    fields = ("whatsapp", "address", "business_name")
+    fields = ("oasis", "photo", "whatsapp", "address", "business_name")
 
 
 @admin.register(User)

@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 
+from core.images import ResizedImageMixin, validate_image_size
 from core.models import TimeStampedModel
 
 from .phone import normalize_phone
@@ -138,10 +139,23 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.status == AccountStatus.APPROVED
 
 
-class Profile(TimeStampedModel):
-    """Informations complémentaires. Le lien vers l'oasis et la photo arrivent à T05."""
+class Profile(ResizedImageMixin, TimeStampedModel):
+    """Informations complémentaires du compte."""
+
+    resized_image_fields = ("photo",)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    oasis = models.ForeignKey(
+        "oases.Oasis",
+        verbose_name="oasis de rattachement",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="profiles",
+    )
+    photo = models.ImageField(
+        "photo", upload_to="profiles/", blank=True, validators=[validate_image_size]
+    )
     whatsapp = models.CharField("WhatsApp", max_length=13, blank=True)
     address = models.TextField("adresse", blank=True)
     business_name = models.CharField("nom de la boutique", max_length=150, blank=True)

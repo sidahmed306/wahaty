@@ -13,6 +13,13 @@ def clear_cache():
     cache.clear()
 
 
+@pytest.fixture(autouse=True)
+def media_tmp(settings, tmp_path):
+    """Les photos des tests vont dans un dossier temporaire, effacé après."""
+    settings.MEDIA_ROOT = tmp_path / "media"
+    return settings.MEDIA_ROOT
+
+
 @pytest.fixture
 def api_client():
     return APIClient()

@@ -35,9 +35,11 @@ INSTALLED_APPS = [
     # Bibliothèques
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
+    "django_filters",
     # Applications Wahaty
     "core",
     "accounts",
+    "oases",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
@@ -139,5 +141,10 @@ USE_TZ = True
 # Fichiers statiques
 
 STATIC_URL = "static/"
+
+# Photos envoyées (oasis, variétés, profils). En local : dossier media/.
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+DATA_UPLOAD_MAX_MEMORY_SIZE = 6 * 1024 * 1024
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

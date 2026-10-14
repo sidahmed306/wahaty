@@ -27,6 +27,16 @@ IsSeller = role_permission(Role.SELLER)
 IsFieldAgent = role_permission(Role.FIELD_AGENT)
 
 
+class IsDirectionOrReadOnly(BasePermission):
+    """Données publiques (oasis, variétés…) : lecture pour tous, même sans compte ;
+    création et modification réservées à la Direction."""
+
+    message = "Seule la Direction peut modifier ces informations."
+
+    def has_permission(self, request, view):
+        return request.method in SAFE_METHODS or is_direction(request.user)
+
+
 class OwnerPermission(BasePermission):
     """Données privées : lecture filtrée par `OwnedQuerysetMixin`, écriture par le propriétaire
     (ou son agent tant que le compte n'est pas repris). La Direction est en lecture seule."""
