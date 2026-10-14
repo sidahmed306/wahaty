@@ -8,6 +8,8 @@ Répondre en **français**, avec des explications simples. Ce fichier contient l
 - PostgreSQL local : Postgres.app **version 18** (celle qui est installée), au lieu de 16. Choisir la même version majeure sur Neon au déploiement.
 - Dépôt GitHub : `sidahmed306/wahaty` (public). Ne jamais y mettre de secret.
 - L'ancien plan basé sur Supabase est abandonné : on suit uniquement ce cahier (Django).
+- Schéma de la base validé (T02) : [docs/T02-schema-base.md](docs/T02-schema-base.md). Il fait foi pour les modèles (il remplace la section 5 ci-dessous quand ils diffèrent).
+- Git : commits avec l'adresse noreply GitHub (réglée dans ce dépôt seulement), sinon GitHub refuse le push.
 
 ---
 
