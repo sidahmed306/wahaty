@@ -27,3 +27,4 @@ STORAGES = {
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
 STATIC_ROOT = None  # pas de collectstatic pendant les tests (évite un avertissement)
+SECURE_SSL_REDIRECT = False  # le client de test parle en HTTP, même si DEBUG=False (GitHub)
