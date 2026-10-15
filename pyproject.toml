@@ -27,6 +27,7 @@ source = [
     "inventory",
     "customers",
     "orders",
+    "invoices",
 ]
 omit = ["*/migrations/*", "config/asgi.py", "config/wsgi.py"]
 

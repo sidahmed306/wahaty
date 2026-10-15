@@ -17,6 +17,7 @@ from accounts.models import User
 from core.money import round_money
 from inventory import services as stock
 from inventory.models import StockMovement
+from invoices.services import cancel_invoices_of_order
 
 from .models import TRANSITIONS, Order, OrderItem, OrderStatus, OrderStatusHistory
 
@@ -137,6 +138,7 @@ def change_status(order, new_status, user, note="", cancel_reason=""):
         if not cancel_reason.strip():
             raise OrderError("Indiquez le motif de l'annulation.")
         order.cancel_reason = cancel_reason
+        cancel_invoices_of_order(order)
 
     order.status = new_status
     order.save()
