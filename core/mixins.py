@@ -1,10 +1,11 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
 from accounts.models import User
 
 from .access import can_write_for, filter_readable, is_field_agent
-from .permissions import OwnerPermission
+from .permissions import OwnerPermission, SellerSpaceAccess
 
 
 class SoftDeleteMixin:
@@ -49,3 +50,25 @@ class OwnedQuerysetMixin:
         if not can_write_for(self.request.user, owner):
             raise PermissionDenied("Agriculteur introuvable ou non géré par vous.")
         serializer.save(**{self.owner_field: owner})
+
+
+class SellerMixin(OwnedQuerysetMixin):
+    """Espace vendeur (le vendeur ; la Direction en lecture).
+
+    À placer avant les mixins DRF : il pose le propriétaire à la création, puis relit la
+    ligne avec ses valeurs calculées (stock, reste à payer…) pour la réponse.
+    """
+
+    permission_classes = [SellerSpaceAccess, OwnerPermission]
+    filter_backends = [DjangoFilterBackend]
+
+    def reload(self, serializer):
+        serializer.instance = self.get_queryset().get(pk=serializer.instance.pk)
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        self.reload(serializer)
+
+    def perform_update(self, serializer):
+        serializer.save()
+        self.reload(serializer)

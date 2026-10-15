@@ -25,6 +25,8 @@ IsDirection = role_permission(Role.DIRECTION)
 IsFarmer = role_permission(Role.FARMER)
 IsSeller = role_permission(Role.SELLER)
 IsFieldAgent = role_permission(Role.FIELD_AGENT)
+# Espace vendeur : le vendeur, et la Direction en lecture.
+SellerSpaceAccess = role_permission(Role.SELLER, Role.DIRECTION)
 
 
 class IsDirectionOrReadOnly(BasePermission):

@@ -1,12 +1,9 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from accounts.models import Role
-from core.mixins import OwnedQuerysetMixin, SoftDeleteMixin
-from core.permissions import OwnerPermission, role_permission
+from core.mixins import SellerMixin, SoftDeleteMixin
 
 from . import services
 from .filters import ProductFilter, PurchaseFilter, StockMovementFilter, SupplierPaymentFilter
@@ -20,31 +17,9 @@ from .serializers import (
     SupplierSerializer,
 )
 
-# Espace vendeur : le vendeur, et la Direction en lecture.
-SellerSpaceAccess = role_permission(Role.SELLER, Role.DIRECTION)
-
 
 def stock_error(exc):
     return ValidationError({"detail": str(exc)})
-
-
-class SellerMixin(OwnedQuerysetMixin):
-    """Espace vendeur. Placé avant les mixins DRF : il pose le propriétaire à la création."""
-
-    permission_classes = [SellerSpaceAccess, OwnerPermission]
-    filter_backends = [DjangoFilterBackend]
-
-    def reload(self, serializer):
-        """Relit la ligne avec ses valeurs calculées (stock, reste à payer) pour la réponse."""
-        serializer.instance = self.get_queryset().get(pk=serializer.instance.pk)
-
-    def perform_create(self, serializer):
-        super().perform_create(serializer)
-        self.reload(serializer)
-
-    def perform_update(self, serializer):
-        serializer.save()
-        self.reload(serializer)
 
 
 class SupplierViewSet(

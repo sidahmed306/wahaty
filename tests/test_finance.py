@@ -153,7 +153,7 @@ def test_total_recalcule_si_le_prix_change(w):
         ({"quantity_kg": "0"}, "quantity_kg"),
         ({"unit_price": "1.001"}, "unit_price"),
         ({"unit_price": "abc"}, "unit_price"),
-        ({"sale_date": str(date.today() + timedelta(days=1))}, "sale_date"),
+        ({"sale_date": str(timezone.localdate() + timedelta(days=1))}, "sale_date"),
     ],
 )
 def test_vente_invalide_refusee(w, changes, field):

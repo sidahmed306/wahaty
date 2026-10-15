@@ -203,7 +203,7 @@ def test_saison_a_cheval_sur_deux_annees(w):
     [
         ({"quantity_kg": "0"}, "quantity_kg"),
         ({"quantity_kg": "-5"}, "quantity_kg"),
-        ({"harvest_date": str(date.today() + timedelta(days=3))}, "harvest_date"),
+        ({"harvest_date": str(timezone.localdate() + timedelta(days=3))}, "harvest_date"),
         ({"season": 2020}, "season"),
         ({"season": 1990}, "season"),
     ],
