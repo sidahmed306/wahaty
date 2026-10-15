@@ -147,12 +147,14 @@ function LinesInput({ field, value, onChange, ctx, options, error }) {
 /** Charge les listes de choix (variétés, fermes, clients…) utilisées par les champs « select ». */
 function useSources(fields, ctx) {
   const [sources, setSources] = useState({})
-  const paths = useMemo(
-    () => [...new Set(fields.filter((f) => f.source && (!f.when || f.when(ctx))).map((f) => f.source.path))],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [fields, ctx.user?.id],
-  )
+  // Clé texte stable : la liste n'est rechargée que si les adresses changent vraiment.
+  // (Un tableau recréé à chaque affichage relançait le chargement en boucle sans fin.)
+  const pathsKey = [
+    ...new Set(fields.filter((f) => f.source && (!f.when || f.when(ctx))).map((f) => f.source.path)),
+  ].join('|')
   const load = useCallback(async () => {
+    const paths = pathsKey ? pathsKey.split('|') : []
+    if (!paths.length) return
     const entries = await Promise.all(
       paths.map(async (path) => {
         try {
@@ -163,7 +165,7 @@ function useSources(fields, ctx) {
       }),
     )
     setSources(Object.fromEntries(entries))
-  }, [paths])
+  }, [pathsKey])
   useEffect(() => {
     load()
   }, [load])
