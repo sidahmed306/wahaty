@@ -14,6 +14,7 @@ from django.db import transaction
 from django.db.models import Case, DecimalField, F, OuterRef, Subquery, Sum, When
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from core.money import round_money
 
@@ -85,8 +86,10 @@ def record_movement(product, kind, quantity, user, **extra):
         available = current_stock(product)
         if quantity > available:
             raise StockError(
-                f"Stock insuffisant pour « {product.name} » : "
-                f"{available} disponible(s), {quantity} demandé(s)."
+                _(
+                    "Stock insuffisant pour « {product} » : "
+                    "{available} disponible(s), {quantity} demandé(s)."
+                ).format(product=product.name, available=available, quantity=quantity)
             )
     return StockMovement.objects.create(
         product=product, kind=kind, quantity=quantity, created_by=user, **extra
@@ -123,12 +126,14 @@ def cancel_purchase(purchase, reason, user):
     est déjà partie ou si l'achat a déjà été payé au-delà de ce qui resterait dû."""
     purchase = Purchase.objects.select_for_update().get(pk=purchase.pk)
     if purchase.is_cancelled:
-        raise StockError("Cet achat est déjà annulé.")
+        raise StockError(_("Cet achat est déjà annulé."))
     Supplier.objects.select_for_update().get(pk=purchase.supplier_id)
     if supplier_balance(purchase.supplier) < purchase.total_amount:
         raise StockError(
-            "Annulation impossible : cet achat est déjà (en partie) payé. "
-            "Le reste à payer deviendrait négatif."
+            _(
+                "Annulation impossible : cet achat est déjà (en partie) payé. "
+                "Le reste à payer deviendrait négatif."
+            )
         )
     for line in purchase.lines.select_related("product"):
         record_movement(
@@ -150,7 +155,9 @@ def record_supplier_payment(owner, supplier, amount, user, **fields):
     supplier = Supplier.objects.select_for_update().get(pk=supplier.pk)
     balance = supplier_balance(supplier)
     if amount > balance:
-        raise StockError(f"Paiement supérieur au reste à payer ({balance} MRU).")
+        raise StockError(
+            _("Paiement supérieur au reste à payer ({balance} MRU).").format(balance=balance)
+        )
     return SupplierPayment.objects.create(
         owner=owner, supplier=supplier, amount=amount, created_by=user, **fields
     )

@@ -1,0 +1,36 @@
+# Render (offre gratuite) : l'API Django. Créé depuis le tableau de bord Render
+# avec « New > Blueprint » et le dépôt GitHub. Les secrets se collent dans Render, jamais ici.
+services:
+  - type: web
+    name: trc-api
+    runtime: python
+    plan: free
+    region: frankfurt # près de la base Neon (Francfort)
+    buildCommand: >-
+      pip install -r requirements.txt &&
+      python manage.py collectstatic --noinput
+    # Offre gratuite : pas d'étape « pre-deploy », les migrations se font au démarrage.
+    startCommand: >-
+      python manage.py migrate --noinput &&
+      gunicorn config.wsgi --workers 2 --timeout 60 --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/health/
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+      - key: CSRF_TRUSTED_ORIGINS
+        value: https://trc-api.onrender.com
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://trc.pages.dev
+      - key: JWT_REFRESH_DAYS
+        value: "30"
+      - key: DATABASE_URL # adresse « pooled » de Neon, collée dans Render
+        sync: false
+      - key: CLOUDINARY_URL # cloudinary://CLE:SECRET@NOM, collée dans Render
+        sync: false

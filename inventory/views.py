@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -39,7 +40,7 @@ class SupplierViewSet(
 
     def perform_destroy(self, instance):
         if services.supplier_balance(instance) != 0:
-            raise ValidationError({"detail": "Ce fournisseur a encore un reste à payer."})
+            raise ValidationError({"detail": _("Ce fournisseur a encore un reste à payer.")})
         super().perform_destroy(instance)
 
 
@@ -62,7 +63,7 @@ class ProductViewSet(
     def check_unique_name(self, owner, name, exclude_pk=None):
         same = Product.objects.filter(owner=owner, name__iexact=name, is_active=True)
         if same.exclude(pk=exclude_pk).exists():
-            raise ValidationError({"name": "Vous avez déjà un produit avec ce nom."})
+            raise ValidationError({"name": _("Vous avez déjà un produit avec ce nom.")})
 
     def perform_create(self, serializer):
         self.check_unique_name(self.request.user, serializer.validated_data["name"])
@@ -77,7 +78,7 @@ class ProductViewSet(
 
     def perform_destroy(self, instance):
         if services.current_stock(instance) != 0:
-            raise ValidationError({"detail": "Videz d'abord le stock de ce produit."})
+            raise ValidationError({"detail": _("Videz d'abord le stock de ce produit.")})
         super().perform_destroy(instance)
 
 

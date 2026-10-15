@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from core.models import TimeStampedModel
 from core.money import MoneyField
@@ -13,12 +14,12 @@ ZERO_OK = [MinValueValidator(Decimal("0"))]
 
 
 class OrderStatus(models.TextChoices):
-    RECEIVED = "received", "Reçue"
-    CONFIRMED = "confirmed", "Confirmée"
-    PREPARED = "prepared", "Préparée"
-    OUT_FOR_DELIVERY = "out_for_delivery", "En livraison"
-    DELIVERED = "delivered", "Livrée"
-    CANCELLED = "cancelled", "Annulée"
+    RECEIVED = "received", _("Reçue")
+    CONFIRMED = "confirmed", _("Confirmée")
+    PREPARED = "prepared", _("Préparée")
+    OUT_FOR_DELIVERY = "out_for_delivery", _("En livraison")
+    DELIVERED = "delivered", _("Livrée")
+    CANCELLED = "cancelled", _("Annulée")
 
 
 # Transitions autorisées (toute autre est refusée). Annulation possible jusqu'à « préparée » (Q9).

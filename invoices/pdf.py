@@ -203,7 +203,7 @@ class InvoiceDrawer:
         self.c.line(MARGIN, 60, RIGHT, 60)
         self.bilingual(45, "Montants en ouguiya (MRU)", "المبالغ بالأوقية", 8, color=colors.grey)
         self.text(WIDTH / 2, 45, f"Page {self.page}", 8, align="center", color=colors.grey)
-        self.text(WIDTH / 2, 32, "Wahaty · واحتي", 8, align="center", color=colors.grey)
+        self.text(WIDTH / 2, 32, "TRC · إرث النخيل", 8, align="center", color=colors.grey)
 
     def render(self):
         register_fonts()

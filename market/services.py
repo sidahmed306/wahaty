@@ -10,6 +10,7 @@ Le public ne voit que les annonces publiées (Q12 : validation obligatoire).
 
 from django.db import transaction
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from orders.models import Notification
 
@@ -23,7 +24,9 @@ class ListingError(Exception):
 def _require(listing, *statuses):
     if listing.status not in statuses:
         raise ListingError(
-            f"Action impossible : l'annonce est « {ListingStatus(listing.status).label} »."
+            _("Action impossible : l'annonce est « {status} ».").format(
+                status=ListingStatus(listing.status).label
+            )
         )
 
 
@@ -63,7 +66,7 @@ def reject(listing, reviewer, reason):
     listing = Listing.objects.select_for_update().get(pk=listing.pk)
     _require(listing, ListingStatus.PENDING)
     if not reason.strip():
-        raise ListingError("Indiquez le motif du refus.")
+        raise ListingError(_("Indiquez le motif du refus."))
     listing = _set(listing, ListingStatus.REJECTED, rejection_reason=reason, reviewed_by=reviewer)
     Notification.objects.create(
         user=listing.owner,
@@ -92,7 +95,7 @@ def mark_sold(listing):
 def add_photo(listing, image, order=0):
     listing = Listing.objects.select_for_update().get(pk=listing.pk)
     if not listing.is_editable:
-        raise ListingError("Les photos se changent seulement en brouillon ou après un refus.")
+        raise ListingError(_("Les photos se changent seulement en brouillon ou après un refus."))
     if listing.photos.count() >= MAX_PHOTOS:
         raise ListingError(f"{MAX_PHOTOS} photos maximum par annonce.")
     return ListingPhoto.objects.create(listing=listing, image=image, order=order)
@@ -100,6 +103,6 @@ def add_photo(listing, image, order=0):
 
 def remove_photo(photo):
     if not photo.listing.is_editable:
-        raise ListingError("Les photos se changent seulement en brouillon ou après un refus.")
+        raise ListingError(_("Les photos se changent seulement en brouillon ou après un refus."))
     photo.image.delete(save=False)
     photo.delete()

@@ -1,5 +1,7 @@
 from django.db import transaction
 from django.db.models import Q
+from django.utils.translation import gettext as _
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import generics, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
@@ -56,15 +58,18 @@ class RefreshView(TokenRefreshView):
 class LogoutView(APIView):
     """Déconnexion : le jeton « refresh » est mis sur liste noire."""
 
+    @extend_schema(
+        request=LogoutSerializer, responses={205: OpenApiResponse(description="Déconnecté")}
+    )
     def post(self, request):
         serializer = LogoutSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
             token = RefreshToken(serializer.validated_data["refresh"])
         except TokenError:
-            return Response({"detail": "Jeton invalide."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": _("Jeton invalide.")}, status=status.HTTP_400_BAD_REQUEST)
         if str(token["user_id"]) != str(request.user.pk):
-            return Response({"detail": "Jeton invalide."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": _("Jeton invalide.")}, status=status.HTTP_400_BAD_REQUEST)
         token.blacklist()
         return Response(status=status.HTTP_205_RESET_CONTENT)
 
@@ -97,7 +102,7 @@ class UserManageViewSet(
 
     def perform_update(self, serializer):
         if serializer.instance.pk == self.request.user.pk:
-            raise PermissionDenied("Vous ne pouvez pas modifier votre propre compte ici.")
+            raise PermissionDenied(_("Vous ne pouvez pas modifier votre propre compte ici."))
         serializer.save()
 
     def _set_status(self, request, new_status):
@@ -128,6 +133,8 @@ class ManagedFarmerViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSe
     permission_classes = [IsFieldAgent]
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):  # génération de la documentation
+            return User.objects.none()
         return managed_farmers(self.request.user).order_by("full_name")
 
     def get_serializer_class(self):
@@ -165,6 +172,7 @@ class ClaimAccountView(APIView):
     authentication_classes = []
     throttle_scope = "login"
 
+    @extend_schema(request=ClaimAccountSerializer, responses={200: OpenApiResponse()})
     def post(self, request):
         serializer = ClaimAccountSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -173,7 +181,7 @@ class ClaimAccountView(APIView):
         except ClaimError as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(
-            {"detail": "Compte repris. Vous pouvez vous connecter avec votre mot de passe."}
+            {"detail": _("Compte repris. Vous pouvez vous connecter avec votre mot de passe.")}
         )
 
 
@@ -182,6 +190,7 @@ class MePhotoView(APIView):
 
     parser_classes = [MultiPartParser, FormParser]
 
+    @extend_schema(request=ProfilePhotoSerializer, responses=ProfilePhotoSerializer)
     def put(self, request):
         profile = request.user.profile
         serializer = ProfilePhotoSerializer(profile, data=request.data)
@@ -191,6 +200,7 @@ class MePhotoView(APIView):
         serializer.save()
         return Response(serializer.data)
 
+    @extend_schema(responses={204: None})
     def delete(self, request):
         request.user.profile.photo.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
@@ -76,7 +77,7 @@ class MyListingViewSet(SoftDeleteMixin, OwnedQuerysetMixin, viewsets.ModelViewSe
         # MarketAccess + can_write_for : le propriétaire est forcément agriculteur ou vendeur.
         owner = self.get_owner_for_create()
         if not can_write_for(self.request.user, owner):
-            raise PermissionDenied("Agriculteur introuvable ou non géré par vous.")
+            raise PermissionDenied(_("Agriculteur introuvable ou non géré par vous."))
         data = serializer.validated_data
         serializer.save(
             owner=owner,
@@ -88,7 +89,7 @@ class MyListingViewSet(SoftDeleteMixin, OwnedQuerysetMixin, viewsets.ModelViewSe
     def perform_update(self, serializer):
         if not serializer.instance.is_editable:
             raise ValidationError(
-                {"detail": "Retirez d'abord l'annonce (retour en brouillon) pour la modifier."}
+                {"detail": _("Retirez d'abord l'annonce (retour en brouillon) pour la modifier.")}
             )
         serializer.save()
 

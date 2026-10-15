@@ -283,9 +283,7 @@ def test_lien_whatsapp_et_telephone(w):
     item = listing(w, status="published", whatsapp_phone="+22246112233", title="Amhat bio")
     row = APIClient().get(f"{PUBLIC}{item.id}/").data
     assert row["whatsapp_link"].startswith("https://wa.me/22246112233?text=")
-    assert "Amhat bio" in unquote(row["whatsapp_link"]) and "Wahaty" in unquote(
-        row["whatsapp_link"]
-    )
+    assert "Amhat bio" in unquote(row["whatsapp_link"]) and "TRC" in unquote(row["whatsapp_link"])
     assert row["phone_link"] == "tel:+22236112233"
 
 
@@ -293,7 +291,7 @@ def test_lien_whatsapp_en_arabe_et_numero_de_secours(w):
     item = listing(w, status="published", language="ar", title="تمر", whatsapp_phone="")
     link = item.whatsapp_link
     assert link.startswith("https://wa.me/22236112233?text=")  # pas de WhatsApp : téléphone
-    assert "واحتي" in unquote(link)
+    assert "إرث النخيل" in unquote(link)
 
 
 @pytest.mark.parametrize(

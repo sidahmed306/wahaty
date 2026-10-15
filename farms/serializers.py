@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from core.access import filter_readable
@@ -82,7 +83,7 @@ class PalmGroupSerializer(FarmChildSerializer):
             duplicate = duplicate.exclude(pk=self.instance.pk)
         if duplicate.exists():
             raise serializers.ValidationError(
-                {"variety": "Cette variété existe déjà dans cette ferme : modifiez la ligne."}
+                {"variety": _("Cette variété existe déjà dans cette ferme : modifiez la ligne.")}
             )
         return attrs
 
@@ -110,7 +111,9 @@ class HarvestSerializer(FarmChildSerializer):
 
     def validate_harvest_date(self, value):
         if value > timezone.localdate():
-            raise serializers.ValidationError("La date de récolte ne peut pas être dans le futur.")
+            raise serializers.ValidationError(
+                _("La date de récolte ne peut pas être dans le futur.")
+            )
         return value
 
     def validate(self, attrs):
@@ -121,7 +124,7 @@ class HarvestSerializer(FarmChildSerializer):
         # Une saison à cheval sur deux années (ex. nov. 2025 → fév. 2026) reste possible.
         if season not in (harvest_date.year, harvest_date.year - 1):
             raise serializers.ValidationError(
-                {"season": "La saison doit être l'année de la récolte ou l'année précédente."}
+                {"season": _("La saison doit être l'année de la récolte ou l'année précédente.")}
             )
         return attrs
 

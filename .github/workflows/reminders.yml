@@ -1,0 +1,36 @@
+# Rappels quotidiens (livraisons de demain, retards, stocks bas) : gratuit, sans Redis ni Celery.
+# Il faut un secret GitHub « NEON_DATABASE_URL » (Settings > Secrets and variables > Actions).
+name: Rappels quotidiens
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # chaque jour à 6 h (heure de Nouakchott = UTC)
+  workflow_dispatch: # bouton « Run workflow » pour lancer à la main
+
+jobs:
+  reminders:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+      SECRET_KEY: rappels-quotidiens-sans-session
+      DEBUG: "False"
+    steps:
+      - name: Secret présent ?
+        id: check
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "Secret NEON_DATABASE_URL absent : rien à faire."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.check.outputs.skip != 'true'
+        uses: actions/checkout@v4
+      - if: steps.check.outputs.skip != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - if: steps.check.outputs.skip != 'true'
+        run: pip install -r requirements.txt
+      - if: steps.check.outputs.skip != 'true'
+        name: Créer les notifications du jour
+        run: python manage.py send_order_reminders

@@ -2,6 +2,8 @@ from datetime import date
 from decimal import Decimal
 
 from django.utils import timezone
+from django.utils.translation import gettext as _
+from drf_spectacular.utils import OpenApiTypes, extend_schema
 from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -21,7 +23,7 @@ class PeriodSerializer(serializers.Serializer):
         attrs.setdefault("date_from", date(today.year, 1, 1))
         attrs.setdefault("date_to", today)
         if attrs["date_from"] > attrs["date_to"]:
-            raise serializers.ValidationError("date_from doit être avant date_to.")
+            raise serializers.ValidationError(_("date_from doit être avant date_to."))
         return attrs
 
 
@@ -41,6 +43,7 @@ def exact(value):
 class DashboardView(APIView):
     builder = None
 
+    @extend_schema(parameters=[PeriodSerializer], responses=OpenApiTypes.OBJECT)
     def get(self, request):
         period = PeriodSerializer(data=request.query_params)
         period.is_valid(raise_exception=True)

@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from core.fields import OwnRelatedField, money_field, not_in_future, quantity_field
@@ -19,7 +20,7 @@ class OrderItemWriteSerializer(serializers.Serializer):
         if "unit_price" not in attrs:
             if attrs["product"].sale_price is None:
                 raise serializers.ValidationError(
-                    {"unit_price": "Ce produit n'a pas de prix de vente : indiquez le prix."}
+                    {"unit_price": _("Ce produit n'a pas de prix de vente : indiquez le prix.")}
                 )
             attrs["unit_price"] = attrs["product"].sale_price
         return attrs
@@ -97,7 +98,7 @@ class OrderSerializer(serializers.ModelSerializer):
         )
         if expected and expected < order_date:
             raise serializers.ValidationError(
-                {"expected_delivery_date": "La livraison ne peut pas être avant la commande."}
+                {"expected_delivery_date": _("La livraison ne peut pas être avant la commande.")}
             )
         return attrs
 

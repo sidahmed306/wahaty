@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.utils.translation import gettext as _
 from rest_framework import generics, mixins, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
@@ -42,7 +43,11 @@ class CustomerViewSet(
         if segment:
             if segment not in Segment.values:
                 raise ValidationError(
-                    {"segment": f"Valeurs possibles : {', '.join(Segment.values)}."}
+                    {
+                        "segment": _("Valeurs possibles : {values}.").format(
+                            values=", ".join(Segment.values)
+                        )
+                    }
                 )
             customers = [c for c in customers if c.segment == segment]
         return Response(self.get_serializer(customers, many=True).data)
@@ -57,7 +62,7 @@ class CustomerViewSet(
 
     def perform_destroy(self, instance):
         if instance.balance != 0:
-            raise ValidationError({"detail": "Ce client a encore une dette ou une avance."})
+            raise ValidationError({"detail": _("Ce client a encore une dette ou une avance.")})
         super().perform_destroy(instance)
 
 

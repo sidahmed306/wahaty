@@ -12,6 +12,7 @@ from decimal import Decimal
 
 from django.db import transaction
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from accounts.models import User
 from core.money import round_money
@@ -51,7 +52,7 @@ def _recompute_totals(order, items=None):
         order.subtotal = sum((round_money(i["quantity"] * i["unit_price"]) for i in items), ZERO)
     total = order.subtotal + order.delivery_fee - order.discount
     if total < 0:
-        raise OrderError("La remise est plus grande que le montant de la commande.")
+        raise OrderError(_("La remise est plus grande que le montant de la commande."))
     order.total_amount = total
 
 
@@ -79,11 +80,14 @@ def create_order(owner, customer, items, user, **fields):
 def update_order(order, user, items=None, **fields):
     order = Order.objects.select_for_update().get(pk=order.pk)
     if order.status in (OrderStatus.DELIVERED, OrderStatus.CANCELLED):
-        raise OrderError("Une commande livrée ou annulée ne se modifie plus.")
+        raise OrderError(_("Une commande livrée ou annulée ne se modifie plus."))
     touched = set(fields) | ({"items"} if items is not None else set())
     if order.status != OrderStatus.RECEIVED and touched & set(EDITABLE_ONLY_WHEN_RECEIVED):
         raise OrderError(
-            "Les lignes, le client, les frais et la remise ne se modifient qu'en statut « Reçue »."
+            _(
+                "Les lignes, le client, les frais et la remise ne se modifient "
+                "qu'en statut « Reçue »."
+            )
         )
     for name, value in fields.items():
         setattr(order, name, value)
@@ -109,8 +113,9 @@ def change_status(order, new_status, user, note="", cancel_reason=""):
     old_status = order.status
     if new_status not in TRANSITIONS[OrderStatus(old_status)]:
         raise OrderError(
-            f"Passage interdit : « {OrderStatus(old_status).label} » → "
-            f"« {OrderStatus(new_status).label} »."
+            _("Passage interdit : « {old} » → « {new} ».").format(
+                old=OrderStatus(old_status).label, new=OrderStatus(new_status).label
+            )
         )
 
     if new_status == OrderStatus.CONFIRMED:
@@ -118,8 +123,10 @@ def change_status(order, new_status, user, note="", cancel_reason=""):
             available = stock.current_stock(product)
             if quantity > available:
                 raise OrderError(
-                    f"Stock insuffisant pour « {product.name} » : "
-                    f"{available} disponible(s), {quantity} commandé(s)."
+                    _(
+                        "Stock insuffisant pour « {product} » : "
+                        "{available} disponible(s), {quantity} commandé(s)."
+                    ).format(product=product.name, available=available, quantity=quantity)
                 )
 
     if new_status == OrderStatus.DELIVERED:
@@ -139,7 +146,7 @@ def change_status(order, new_status, user, note="", cancel_reason=""):
 
     if new_status == OrderStatus.CANCELLED:
         if not cancel_reason.strip():
-            raise OrderError("Indiquez le motif de l'annulation.")
+            raise OrderError(_("Indiquez le motif de l'annulation."))
         order.cancel_reason = cancel_reason
         cancel_invoices_of_order(order)
 

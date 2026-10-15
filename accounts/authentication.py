@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy as _
 from rest_framework import exceptions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -5,10 +6,10 @@ from .models import AccountStatus
 
 STATUS_ERRORS = {
     AccountStatus.PENDING: (
-        "Votre compte attend la validation de la Direction.",
+        _("Votre compte attend la validation de la Direction."),
         "account_pending",
     ),
-    AccountStatus.SUSPENDED: ("Votre compte est suspendu.", "account_suspended"),
+    AccountStatus.SUSPENDED: (_("Votre compte est suspendu."), "account_suspended"),
 }
 
 

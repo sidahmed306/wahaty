@@ -1,6 +1,7 @@
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.signals import user_logged_in
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer,
@@ -40,7 +41,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate_phone(self, value):
         phone = clean_phone(value)
         if User.objects.filter(phone=phone).exists():
-            raise serializers.ValidationError("Ce numéro est déjà utilisé.")
+            raise serializers.ValidationError(_("Ce numéro est déjà utilisé."))
         return phone
 
     def validate_roles(self, value):
@@ -183,7 +184,7 @@ class ManagedFarmerSerializer(serializers.ModelSerializer):
         fields = ["id", "phone", "full_name", "status", "claimed_at", "date_joined", "can_edit"]
         read_only_fields = fields
 
-    def get_can_edit(self, obj):
+    def get_can_edit(self, obj) -> bool:
         return obj.claimed_at is None
 
 
@@ -202,7 +203,7 @@ class AgentFarmerCreateSerializer(serializers.ModelSerializer):
     def validate_phone(self, value):
         phone = clean_phone(value)
         if User.objects.filter(phone=phone).exists():
-            raise serializers.ValidationError("Ce numéro est déjà utilisé.")
+            raise serializers.ValidationError(_("Ce numéro est déjà utilisé."))
         return phone
 
     def create(self, validated_data):

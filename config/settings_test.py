@@ -16,3 +16,14 @@ DATABASES = {"default": env.db("TEST_DATABASE_URL")}
 
 # Hachage rapide pour accélérer les tests (jamais utilisé par la plateforme).
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+# Les tests vérifient les messages en français (langue des textes source) ; les tests de
+# traduction demandent l'arabe explicitement (Accept-Language: ar).
+LANGUAGE_CODE = "fr"
+
+# Les tests n'envoient jamais de photo chez Cloudinary, et n'ont pas besoin de collectstatic.
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
+STATIC_ROOT = None  # pas de collectstatic pendant les tests (évite un avertissement)

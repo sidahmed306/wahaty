@@ -1,6 +1,7 @@
 """Champs d'API communs : montants MRU, quantités, dates, liens vers ses propres données."""
 
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from .money import CENT, MONEY_DIGITS
@@ -18,7 +19,7 @@ def quantity_field(**kwargs):
 
 def not_in_future(value):
     if value > timezone.localdate():
-        raise serializers.ValidationError("La date ne peut pas être dans le futur.")
+        raise serializers.ValidationError(_("La date ne peut pas être dans le futur."))
     return value
 
 

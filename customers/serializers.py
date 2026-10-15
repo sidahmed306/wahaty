@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from accounts.serializers import clean_phone
@@ -53,7 +54,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         if self.instance:
             same = same.exclude(pk=self.instance.pk)
         if same.exists():
-            raise serializers.ValidationError("Vous avez déjà un client avec ce numéro.")
+            raise serializers.ValidationError(_("Vous avez déjà un client avec ce numéro."))
         return phone
 
     def validate_whatsapp(self, value):
@@ -72,10 +73,10 @@ class PaymentSerializer(serializers.ModelSerializer):
         if order is not None:
             if order.customer_id != attrs["customer"].pk:
                 raise serializers.ValidationError(
-                    {"order": "Cette commande n'est pas celle de ce client."}
+                    {"order": _("Cette commande n'est pas celle de ce client.")}
                 )
             if order.status == OrderStatus.CANCELLED:
-                raise serializers.ValidationError({"order": "Cette commande est annulée."})
+                raise serializers.ValidationError({"order": _("Cette commande est annulée.")})
         return attrs
 
     class Meta:

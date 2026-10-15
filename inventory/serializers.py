@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from accounts.serializers import clean_phone
@@ -61,7 +62,7 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["owner"]
 
-    def get_is_low_stock(self, obj):
+    def get_is_low_stock(self, obj) -> bool:
         threshold = obj.low_stock_threshold
         return threshold is not None and getattr(obj, "stock", 0) <= threshold
 
@@ -148,7 +149,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
     def validate_lines(self, lines):
         total = sum(round_money(line["quantity"] * line["unit_cost"]) for line in lines)
         if total > MAX_MONEY:
-            raise serializers.ValidationError("Montant total trop élevé.")
+            raise serializers.ValidationError(_("Montant total trop élevé."))
         return lines
 
 
@@ -182,8 +183,8 @@ class SupplierPaymentSerializer(serializers.ModelSerializer):
         if purchase is not None:
             if purchase.supplier_id != attrs["supplier"].pk:
                 raise serializers.ValidationError(
-                    {"purchase": "Cet achat ne vient pas de ce fournisseur."}
+                    {"purchase": _("Cet achat ne vient pas de ce fournisseur.")}
                 )
             if purchase.is_cancelled:
-                raise serializers.ValidationError({"purchase": "Cet achat est annulé."})
+                raise serializers.ValidationError({"purchase": _("Cet achat est annulé.")})
         return attrs

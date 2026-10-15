@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from core.access import filter_readable
@@ -66,7 +67,7 @@ class SaleSerializer(OwnedFinanceSerializer):
         quantity = attrs.get("quantity_kg", getattr(self.instance, "quantity_kg", None))
         price = attrs.get("unit_price", getattr(self.instance, "unit_price", None))
         if round_money(quantity * price) > MAX_MONEY:
-            raise serializers.ValidationError("Montant total trop élevé.")
+            raise serializers.ValidationError(_("Montant total trop élevé."))
         return attrs
 
 

@@ -35,5 +35,6 @@ source = [
 omit = ["*/migrations/*", "config/asgi.py", "config/wsgi.py"]
 
 [tool.coverage.report]
+fail_under = 80  # objectif du cahier : au moins 80 %
 show_missing = true
 skip_covered = true

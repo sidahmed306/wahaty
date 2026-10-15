@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
 from core.images import ResizedImageMixin, validate_image_size
 from core.models import TimeStampedModel
@@ -14,11 +15,11 @@ MAX_PHOTOS = 5
 
 
 class ListingStatus(models.TextChoices):
-    DRAFT = "draft", "Brouillon"
-    PENDING = "pending", "En attente de validation"
-    PUBLISHED = "published", "Publiée"
-    REJECTED = "rejected", "Refusée"
-    SOLD = "sold", "Vendue"
+    DRAFT = "draft", _("Brouillon")
+    PENDING = "pending", _("En attente de validation")
+    PUBLISHED = "published", _("Publiée")
+    REJECTED = "rejected", _("Refusée")
+    SOLD = "sold", _("Vendue")
 
 
 # Une annonce ne se modifie (texte, prix, photos) qu'en brouillon ou après un refus.
@@ -93,9 +94,9 @@ class Listing(TimeStampedModel):
         """Lien wa.me avec un message prêt à envoyer (numéro sans « + »)."""
         phone = self.whatsapp_phone or self.contact_phone
         message = (
-            f"السلام عليكم، أنا مهتم بإعلانكم « {self.title} » على واحتي."
+            f"السلام عليكم، أنا مهتم بإعلانكم « {self.title} » على منصة إرث النخيل TRC."
             if self.language == "ar"
-            else f"Bonjour, je suis intéressé(e) par votre annonce « {self.title} » sur Wahaty."
+            else f"Bonjour, je suis intéressé(e) par votre annonce « {self.title} » sur TRC."
         )
         return f"https://wa.me/{phone.lstrip('+')}?text={quote(message)}"
 

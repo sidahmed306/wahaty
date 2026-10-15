@@ -1,4 +1,6 @@
+from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -51,12 +53,12 @@ class FinanceRecordViewSet(SoftDeleteMixin, OwnedQuerysetMixin, viewsets.ModelVi
     def check_relations(self, owner, data):
         farm = data.get("farm")
         if farm is not None and farm.owner_id != owner.pk:
-            raise ValidationError({"farm": "Cette ferme n'appartient pas à ce propriétaire."})
+            raise ValidationError({"farm": _("Cette ferme n'appartient pas à ce propriétaire.")})
 
     def perform_create(self, serializer):
         owner = self.get_owner_for_create()
         if not can_write_for(self.request.user, owner):
-            raise PermissionDenied("Agriculteur introuvable ou non géré par vous.")
+            raise PermissionDenied(_("Agriculteur introuvable ou non géré par vous."))
         self.check_relations(owner, serializer.validated_data)
         serializer.save(owner=owner, created_by=self.request.user)
 
@@ -94,7 +96,7 @@ class ExpenseViewSet(FinanceRecordViewSet):
         category = data.get("category")
         if category is not None and not category.usable_by(owner):
             raise ValidationError(
-                {"category": "Cette catégorie ne correspond pas à votre activité."}
+                {"category": _("Cette catégorie ne correspond pas à votre activité.")}
             )
 
 
@@ -109,7 +111,7 @@ class SummaryQuerySerializer(serializers.Serializer):
             and attrs.get("date_to")
             and attrs["date_from"] > attrs["date_to"]
         ):
-            raise serializers.ValidationError("date_from doit être avant date_to.")
+            raise serializers.ValidationError(_("date_from doit être avant date_to."))
         return attrs
 
 
@@ -122,6 +124,7 @@ class FinanceSummaryView(APIView):
 
     permission_classes = [ExpensesAccess]
 
+    @extend_schema(parameters=[SummaryQuerySerializer], responses=FinanceSummarySerializer)
     def get(self, request):
         params = SummaryQuerySerializer(data=request.query_params)
         params.is_valid(raise_exception=True)
@@ -132,7 +135,7 @@ class FinanceSummaryView(APIView):
         if "owner" in query:
             owner = User.objects.filter(pk=query["owner"]).first()
             if not can_read_for(request.user, owner):
-                raise NotFound("Utilisateur introuvable.")
+                raise NotFound(_("Utilisateur introuvable."))
             sales, expenses, orders = (qs.filter(owner=owner) for qs in (sales, expenses, orders))
         data = finance_summary(
             sales, expenses, orders, query.get("date_from"), query.get("date_to")

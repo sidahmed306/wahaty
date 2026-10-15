@@ -35,6 +35,8 @@ def readable_filter(user, owner_field="owner"):
 
 
 def filter_readable(queryset, user, owner_field="owner"):
+    if not user.is_authenticated:  # visiteur (ou génération de la documentation) : rien
+        return queryset.none()
     condition = readable_filter(user, owner_field)
     return queryset if condition is None else queryset.filter(condition)
 

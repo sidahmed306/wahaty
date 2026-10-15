@@ -96,6 +96,8 @@ class NotificationViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):  # génération de la documentation
+            return Notification.objects.none()
         qs = Notification.objects.filter(user=self.request.user).select_related("order")
         if self.request.query_params.get("unread") == "true":
             qs = qs.filter(read_at__isnull=True)

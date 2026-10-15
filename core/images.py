@@ -5,6 +5,7 @@ from pathlib import Path
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.utils.translation import gettext as _
 from PIL import Image, ImageOps
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # 5 Mo
@@ -14,7 +15,7 @@ JPEG_QUALITY = 82
 
 def validate_image_size(file):
     if file.size > MAX_UPLOAD_BYTES:
-        raise ValidationError("Image trop lourde : 5 Mo maximum.", code="image_too_large")
+        raise ValidationError(_("Image trop lourde : 5 Mo maximum."), code="image_too_large")
 
 
 def resize_image(file, max_side=MAX_SIDE_PX):

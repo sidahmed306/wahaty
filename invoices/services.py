@@ -7,6 +7,7 @@ la transaction annule aussi l'incrément du compteur : aucun numéro n'est perdu
 
 from django.db import transaction
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from orders.models import Order, OrderStatus
 
@@ -62,7 +63,7 @@ def _lines_snapshot(order):
 
 
 def next_number(owner, year):
-    sequence, _ = InvoiceSequence.objects.get_or_create(owner=owner, year=year)
+    sequence, _created = InvoiceSequence.objects.get_or_create(owner=owner, year=year)
     sequence = InvoiceSequence.objects.select_for_update().get(pk=sequence.pk)
     sequence.last_number += 1
     sequence.save(update_fields=["last_number"])
@@ -73,9 +74,9 @@ def next_number(owner, year):
 def create_invoice(order, user, issue_date=None):
     order = Order.objects.select_for_update().get(pk=order.pk)
     if order.status not in INVOICEABLE:
-        raise InvoiceError("On ne facture qu'une commande confirmée (ou plus avancée).")
+        raise InvoiceError(_("On ne facture qu'une commande confirmée (ou plus avancée)."))
     if order.invoices.filter(status=Invoice.Status.ISSUED).exists():
-        raise InvoiceError("Cette commande a déjà une facture valide.")
+        raise InvoiceError(_("Cette commande a déjà une facture valide."))
     issue_date = issue_date or timezone.localdate()
     sequence = next_number(order.owner, issue_date.year)
     return Invoice.objects.create(
@@ -100,9 +101,9 @@ def create_invoice(order, user, issue_date=None):
 def cancel_invoice(invoice, reason):
     invoice = Invoice.objects.select_for_update().get(pk=invoice.pk)
     if invoice.status == Invoice.Status.CANCELLED:
-        raise InvoiceError("Cette facture est déjà annulée.")
+        raise InvoiceError(_("Cette facture est déjà annulée."))
     if not reason.strip():
-        raise InvoiceError("Indiquez le motif de l'annulation.")
+        raise InvoiceError(_("Indiquez le motif de l'annulation."))
     invoice.status = Invoice.Status.CANCELLED
     invoice.cancelled_at = timezone.now()
     invoice.cancel_reason = reason

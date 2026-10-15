@@ -1,0 +1,343 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-15 20:19+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+#: accounts/authentication.py:9
+msgid "Votre compte attend la validation de la Direction."
+msgstr "حسابك في انتظار مصادقة الإدارة."
+
+#: accounts/authentication.py:12
+msgid "Votre compte est suspendu."
+msgstr "حسابك موقوف."
+
+#: accounts/claims.py:30
+msgid "Ce compte a déjà été repris par l'agriculteur."
+msgstr "سبق أن استرجع المزارع هذا الحساب."
+
+#: accounts/claims.py:47
+msgid "Numéro ou code de reprise incorrect, ou code expiré."
+msgstr "رقم الهاتف أو رمز الاسترجاع غير صحيح، أو انتهت صلاحية الرمز."
+
+#: accounts/models.py:16
+msgid "Direction"
+msgstr "الإدارة"
+
+#: accounts/models.py:17
+msgid "Agriculteur"
+msgstr "مزارع"
+
+#: accounts/models.py:18
+msgid "Vendeur"
+msgstr "بائع"
+
+#: accounts/models.py:19
+msgid "Agent de terrain"
+msgstr "وكيل ميداني"
+
+#: accounts/models.py:41
+msgid "Au moins un rôle est obligatoire."
+msgstr "يجب اختيار دور واحد على الأقل."
+
+#: accounts/models.py:45
+#, python-brace-format
+msgid "Rôle inconnu : {roles}."
+msgstr "دور غير معروف: {roles}."
+
+#: accounts/models.py:48
+msgid "Un rôle est répété."
+msgstr "أحد الأدوار مكرر."
+
+#: accounts/models.py:52
+#, python-brace-format
+msgid "Le rôle « {role} » ne se combine avec aucun autre."
+msgstr "لا يمكن جمع دور «{role}» مع أي دور آخر."
+
+#: accounts/phone.py:24
+msgid ""
+"Numéro invalide : 8 chiffres commençant par 2, 3 ou 4 (ex. 22 12 34 56)."
+msgstr "رقم غير صالح: 8 أرقام تبدأ بـ 2 أو 3 أو 4 (مثال: 22 12 34 56)."
+
+#: accounts/serializers.py:44 accounts/serializers.py:206
+msgid "Ce numéro est déjà utilisé."
+msgstr "هذا الرقم مستخدم من قبل."
+
+#: accounts/views.py:66 accounts/views.py:68
+msgid "Jeton invalide."
+msgstr "رمز الدخول غير صالح."
+
+#: accounts/views.py:101
+msgid "Vous ne pouvez pas modifier votre propre compte ici."
+msgstr "لا يمكنك تعديل حسابك الخاص من هنا."
+
+#: accounts/views.py:177
+msgid "Compte repris. Vous pouvez vous connecter avec votre mot de passe."
+msgstr "تم استرجاع الحساب. يمكنك الدخول بكلمة مرورك."
+
+#: core/fields.py:22
+msgid "La date ne peut pas être dans le futur."
+msgstr "لا يمكن أن يكون التاريخ في المستقبل."
+
+#: core/images.py:18
+msgid "Image trop lourde : 5 Mo maximum."
+msgstr "الصورة كبيرة جدًا: 5 ميغابايت كحد أقصى."
+
+#: core/mixins.py:42
+msgid "Indiquez l'agriculteur pour qui vous saisissez."
+msgstr "حدّد المزارع الذي تُدخل البيانات لصالحه."
+
+#: core/mixins.py:47 core/mixins.py:52 farms/views.py:67 finance/views.py:60
+#: market/views.py:80
+msgid "Agriculteur introuvable ou non géré par vous."
+msgstr "المزارع غير موجود أو لا تديره أنت."
+
+#: core/permissions.py:13
+msgid "Votre rôle ne permet pas cette action."
+msgstr "دورك لا يسمح بهذه العملية."
+
+#: core/permissions.py:37
+msgid "Seule la Direction peut modifier ces informations."
+msgstr "الإدارة وحدها يمكنها تعديل هذه المعلومات."
+
+#: core/permissions.py:47
+msgid "Vous ne pouvez pas modifier ces données."
+msgstr "لا يمكنك تعديل هذه البيانات."
+
+#: customers/serializers.py:57
+msgid "Vous avez déjà un client avec ce numéro."
+msgstr "لديك زبون آخر بهذا الرقم."
+
+#: customers/serializers.py:76
+msgid "Cette commande n'est pas celle de ce client."
+msgstr "هذه الطلبية ليست لهذا الزبون."
+
+#: customers/serializers.py:79
+msgid "Cette commande est annulée."
+msgstr "هذه الطلبية ملغاة."
+
+#: customers/views.py:47
+#, python-brace-format
+msgid "Valeurs possibles : {values}."
+msgstr "القيم الممكنة: {values}."
+
+#: customers/views.py:65
+msgid "Ce client a encore une dette ou une avance."
+msgstr "لهذا الزبون دين أو تسبيق لم يُسوَّ بعد."
+
+#: dashboard/views.py:25 finance/views.py:113
+msgid "date_from doit être avant date_to."
+msgstr "يجب أن يكون تاريخ البداية قبل تاريخ النهاية."
+
+#: farms/serializers.py:86
+msgid "Cette variété existe déjà dans cette ferme : modifiez la ligne."
+msgstr "هذا النوع موجود في هذه المزرعة: عدّل السطر الموجود."
+
+#: farms/serializers.py:115
+msgid "La date de récolte ne peut pas être dans le futur."
+msgstr "لا يمكن أن يكون تاريخ الجني في المستقبل."
+
+#: farms/serializers.py:127
+msgid "La saison doit être l'année de la récolte ou l'année précédente."
+msgstr "يجب أن يكون الموسم سنة الجني أو السنة التي قبلها."
+
+#: farms/views.py:30
+msgid "Vous ne pouvez pas saisir de données pour cette ferme."
+msgstr "لا يمكنك إدخال بيانات لهذه المزرعة."
+
+#: farms/views.py:62
+msgid "Cet agriculteur a déjà une ferme avec ce nom."
+msgstr "لدى هذا المزارع مزرعة بهذا الاسم."
+
+#: finance/serializers.py:70 inventory/serializers.py:152
+msgid "Montant total trop élevé."
+msgstr "المبلغ الإجمالي مرتفع جدًا."
+
+#: finance/views.py:55
+msgid "Cette ferme n'appartient pas à ce propriétaire."
+msgstr "هذه المزرعة لا تعود لهذا المالك."
+
+#: finance/views.py:98
+msgid "Cette catégorie ne correspond pas à votre activité."
+msgstr "هذه الفئة لا تناسب نشاطك."
+
+#: finance/views.py:136
+msgid "Utilisateur introuvable."
+msgstr "المستخدم غير موجود."
+
+#: inventory/serializers.py:186
+msgid "Cet achat ne vient pas de ce fournisseur."
+msgstr "هذا الشراء ليس من هذا المورّد."
+
+#: inventory/serializers.py:189
+msgid "Cet achat est annulé."
+msgstr "هذا الشراء ملغى."
+
+#: inventory/services.py:90
+#, python-brace-format
+msgid ""
+"Stock insuffisant pour « {product} » : {available} disponible(s), {quantity} "
+"demandé(s)."
+msgstr "المخزون غير كافٍ لـ «{product}»: المتوفر {available}، والمطلوب {quantity}."
+
+#: inventory/services.py:129
+msgid "Cet achat est déjà annulé."
+msgstr "هذا الشراء ملغى من قبل."
+
+#: inventory/services.py:134
+msgid ""
+"Annulation impossible : cet achat est déjà (en partie) payé. Le reste à "
+"payer deviendrait négatif."
+msgstr "لا يمكن الإلغاء: دُفع هذا الشراء (أو جزء منه). سيصبح الباقي للدفع سالبًا."
+
+#: inventory/services.py:159
+#, python-brace-format
+msgid "Paiement supérieur au reste à payer ({balance} MRU)."
+msgstr "الدفعة أكبر من الباقي للدفع ({balance} أوقية)."
+
+#: inventory/views.py:43
+msgid "Ce fournisseur a encore un reste à payer."
+msgstr "ما زال لهذا المورّد مبلغ باقٍ للدفع."
+
+#: inventory/views.py:66
+msgid "Vous avez déjà un produit avec ce nom."
+msgstr "لديك منتج بهذا الاسم."
+
+#: inventory/views.py:81
+msgid "Videz d'abord le stock de ce produit."
+msgstr "أفرغ مخزون هذا المنتج أولًا."
+
+#: invoices/services.py:77
+msgid "On ne facture qu'une commande confirmée (ou plus avancée)."
+msgstr "لا تُصدر الفاتورة إلا لطلبية مؤكدة (أو في مرحلة متقدمة)."
+
+#: invoices/services.py:79
+msgid "Cette commande a déjà une facture valide."
+msgstr "لهذه الطلبية فاتورة صالحة من قبل."
+
+#: invoices/services.py:104
+msgid "Cette facture est déjà annulée."
+msgstr "هذه الفاتورة ملغاة من قبل."
+
+#: invoices/services.py:106 orders/services.py:149
+msgid "Indiquez le motif de l'annulation."
+msgstr "اذكر سبب الإلغاء."
+
+#: market/models.py:18
+msgid "Brouillon"
+msgstr "مسودة"
+
+#: market/models.py:19
+msgid "En attente de validation"
+msgstr "في انتظار المصادقة"
+
+#: market/models.py:20
+msgid "Publiée"
+msgstr "منشور"
+
+#: market/models.py:21
+msgid "Refusée"
+msgstr "مرفوض"
+
+#: market/models.py:22
+msgid "Vendue"
+msgstr "مُباع"
+
+#: market/services.py:27
+#, python-brace-format
+msgid "Action impossible : l'annonce est « {status} »."
+msgstr "عملية غير ممكنة: الإعلان «{status}»."
+
+#: market/services.py:69
+msgid "Indiquez le motif du refus."
+msgstr "اذكر سبب الرفض."
+
+#: market/services.py:98 market/services.py:106
+msgid "Les photos se changent seulement en brouillon ou après un refus."
+msgstr "لا تُغيَّر الصور إلا في المسودة أو بعد الرفض."
+
+#: market/views.py:92
+msgid "Retirez d'abord l'annonce (retour en brouillon) pour la modifier."
+msgstr "اسحب الإعلان أولًا (العودة إلى المسودة) لتعديله."
+
+#: orders/models.py:17
+msgid "Reçue"
+msgstr "مستلمة"
+
+#: orders/models.py:18
+msgid "Confirmée"
+msgstr "مؤكدة"
+
+#: orders/models.py:19
+msgid "Préparée"
+msgstr "محضّرة"
+
+#: orders/models.py:20
+msgid "En livraison"
+msgstr "قيد التوصيل"
+
+#: orders/models.py:21
+msgid "Livrée"
+msgstr "مسلّمة"
+
+#: orders/models.py:22
+msgid "Annulée"
+msgstr "ملغاة"
+
+#: orders/serializers.py:23
+msgid "Ce produit n'a pas de prix de vente : indiquez le prix."
+msgstr "ليس لهذا المنتج سعر بيع: أدخل السعر."
+
+#: orders/serializers.py:101
+msgid "La livraison ne peut pas être avant la commande."
+msgstr "لا يمكن أن يكون التسليم قبل الطلبية."
+
+#: orders/services.py:55
+msgid "La remise est plus grande que le montant de la commande."
+msgstr "التخفيض أكبر من مبلغ الطلبية."
+
+#: orders/services.py:83
+msgid "Une commande livrée ou annulée ne se modifie plus."
+msgstr "لا يمكن تعديل طلبية مسلّمة أو ملغاة."
+
+#: orders/services.py:88
+msgid ""
+"Les lignes, le client, les frais et la remise ne se modifient qu'en statut « "
+"Reçue »."
+msgstr "لا تُعدَّل المنتجات والزبون والرسوم والتخفيض إلا في حالة «مستلمة»."
+
+#: orders/services.py:116
+#, python-brace-format
+msgid "Passage interdit : « {old} » → « {new} »."
+msgstr "انتقال غير مسموح: «{old}» ← «{new}»."
+
+#: orders/services.py:127
+#, python-brace-format
+msgid ""
+"Stock insuffisant pour « {product} » : {available} disponible(s), {quantity} "
+"commandé(s)."
+msgstr "المخزون غير كافٍ لـ «{product}»: المتوفر {available}، والمطلوب {quantity}."
+
+# Message de Django 5.2 encore absent de sa traduction arabe (ajouté à la main :
+# à garder si « makemessages » le marque comme obsolète).
+msgid "This password is too short. It must contain at least %d character."
+msgid_plural "This password is too short. It must contain at least %d characters."
+msgstr[0] "كلمة المرور هذه قصيرة جدًا. يجب أن تتكون من %d حرف على الأقل."
+msgstr[1] "كلمة المرور هذه قصيرة جدًا. يجب أن تتكون من %d حرف على الأقل."
+msgstr[2] "كلمة المرور هذه قصيرة جدًا. يجب أن تتكون من %d حرف على الأقل."
+msgstr[3] "كلمة المرور هذه قصيرة جدًا. يجب أن تتكون من %d أحرف على الأقل."
+msgstr[4] "كلمة المرور هذه قصيرة جدًا. يجب أن تتكون من %d حرفًا على الأقل."
+msgstr[5] "كلمة المرور هذه قصيرة جدًا. يجب أن تتكون من %d حرف على الأقل."

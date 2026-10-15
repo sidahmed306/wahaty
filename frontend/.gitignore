@@ -26,3 +26,4 @@ dist-ssr
 # Coverage
 coverage
 dev-dist
+.env

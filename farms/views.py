@@ -1,5 +1,6 @@
 from django.db.models import F, Q, Sum
 from django.db.models.functions import Coalesce
+from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -26,7 +27,7 @@ from .totals import palm_totals, production_totals
 # Espace agriculteur : l'agriculteur, son agent de terrain, et la Direction (lecture).
 FarmSpaceAccess = role_permission(Role.FARMER, Role.FIELD_AGENT, Role.DIRECTION)
 
-NOT_YOURS = "Vous ne pouvez pas saisir de données pour cette ferme."
+NOT_YOURS = _("Vous ne pouvez pas saisir de données pour cette ferme.")
 
 
 def active_sum(field):
@@ -58,12 +59,12 @@ class FarmViewSet(SoftDeleteMixin, OwnedQuerysetMixin, viewsets.ModelViewSet):
     def check_unique_name(owner, name, exclude_pk=None):
         same = Farm.objects.filter(owner=owner, name__iexact=name, is_active=True)
         if same.exclude(pk=exclude_pk).exists():
-            raise ValidationError({"name": "Cet agriculteur a déjà une ferme avec ce nom."})
+            raise ValidationError({"name": _("Cet agriculteur a déjà une ferme avec ce nom.")})
 
     def perform_create(self, serializer):
         owner = self.get_owner_for_create()
         if not can_write_for(self.request.user, owner) or not owner.has_role(Role.FARMER):
-            raise PermissionDenied("Agriculteur introuvable ou non géré par vous.")
+            raise PermissionDenied(_("Agriculteur introuvable ou non géré par vous."))
         self.check_unique_name(owner, serializer.validated_data["name"])
         serializer.save(owner=owner, created_by=self.request.user)
 

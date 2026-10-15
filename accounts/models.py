@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from core.images import ResizedImageMixin, validate_image_size
 from core.models import TimeStampedModel
@@ -12,10 +13,10 @@ from .phone import normalize_phone
 
 
 class Role(models.TextChoices):
-    DIRECTION = "direction", "Direction"
-    FARMER = "farmer", "Agriculteur"
-    SELLER = "seller", "Vendeur"
-    FIELD_AGENT = "field_agent", "Agent de terrain"
+    DIRECTION = "direction", _("Direction")
+    FARMER = "farmer", _("Agriculteur")
+    SELLER = "seller", _("Vendeur")
+    FIELD_AGENT = "field_agent", _("Agent de terrain")
 
 
 # Rôles qui ne se combinent avec aucun autre (décision Q2 du schéma T02).
@@ -37,16 +38,20 @@ class Language(models.TextChoices):
 
 def validate_roles(roles):
     if not roles:
-        raise ValidationError("Au moins un rôle est obligatoire.", code="no_role")
+        raise ValidationError(_("Au moins un rôle est obligatoire."), code="no_role")
     unknown = set(roles) - set(Role.values)
     if unknown:
-        raise ValidationError(f"Rôle inconnu : {', '.join(sorted(unknown))}.", code="bad_role")
+        raise ValidationError(
+            _("Rôle inconnu : {roles}.").format(roles=", ".join(sorted(unknown))), code="bad_role"
+        )
     if len(set(roles)) != len(roles):
-        raise ValidationError("Un rôle est répété.", code="duplicate_role")
+        raise ValidationError(_("Un rôle est répété."), code="duplicate_role")
     for role in EXCLUSIVE_ROLES:
         if role in roles and len(roles) > 1:
             raise ValidationError(
-                f"Le rôle « {Role(role).label} » ne se combine avec aucun autre.",
+                _("Le rôle « {role} » ne se combine avec aucun autre.").format(
+                    role=Role(role).label
+                ),
                 code="exclusive_role",
             )
 

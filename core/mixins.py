@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
@@ -38,17 +39,17 @@ class OwnedQuerysetMixin:
         owner_id = self.request.data.get("owner")
         if not owner_id:
             raise serializers.ValidationError(
-                {"owner": "Indiquez l'agriculteur pour qui vous saisissez."}
+                {"owner": _("Indiquez l'agriculteur pour qui vous saisissez.")}
             )
         try:
             return User.objects.get(pk=owner_id)
         except (User.DoesNotExist, ValueError, TypeError):
-            raise PermissionDenied("Agriculteur introuvable ou non géré par vous.") from None
+            raise PermissionDenied(_("Agriculteur introuvable ou non géré par vous.")) from None
 
     def perform_create(self, serializer):
         owner = self.get_owner_for_create()
         if not can_write_for(self.request.user, owner):
-            raise PermissionDenied("Agriculteur introuvable ou non géré par vous.")
+            raise PermissionDenied(_("Agriculteur introuvable ou non géré par vous."))
         serializer.save(**{self.owner_field: owner})
 
 

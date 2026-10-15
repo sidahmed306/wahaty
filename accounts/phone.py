@@ -3,6 +3,7 @@
 import re
 
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 PHONE_RE = re.compile(r"^\+222[234]\d{7}$")
 
@@ -20,7 +21,7 @@ def normalize_phone(value: str) -> str:
         digits = "+222" + digits
     if not PHONE_RE.match(digits):
         raise ValidationError(
-            "Numéro invalide : 8 chiffres commençant par 2, 3 ou 4 (ex. 22 12 34 56).",
+            _("Numéro invalide : 8 chiffres commençant par 2, 3 ou 4 (ex. 22 12 34 56)."),
             code="invalid_phone",
         )
     return digits

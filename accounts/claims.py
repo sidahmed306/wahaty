@@ -11,6 +11,7 @@ from datetime import timedelta
 from django.contrib.auth.hashers import check_password, make_password
 from django.db import transaction
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from .models import AccountClaim, User
 
@@ -26,8 +27,8 @@ class ClaimError(Exception):
 def new_claim_code(farmer, agent):
     """Crée (ou remplace) le code de reprise ; retourne le code en clair et sa date d'expiration."""
     if farmer.claimed_at is not None:
-        raise ClaimError("Ce compte a déjà été repris par l'agriculteur.")
-    code = "".join(secrets.choice(CODE_ALPHABET) for _ in range(CODE_LENGTH))
+        raise ClaimError(_("Ce compte a déjà été repris par l'agriculteur."))
+    code = "".join(secrets.choice(CODE_ALPHABET) for _i in range(CODE_LENGTH))
     expires_at = timezone.now() + CODE_VALIDITY
     AccountClaim.objects.update_or_create(
         user=farmer,
@@ -43,7 +44,7 @@ def normalize_code(code):
 @transaction.atomic
 def claim_account(phone, code, password):
     """Vérifie le code et donne le compte à l'agriculteur. Lève ClaimError sinon."""
-    error = ClaimError("Numéro ou code de reprise incorrect, ou code expiré.")
+    error = ClaimError(_("Numéro ou code de reprise incorrect, ou code expiré."))
     user = User.objects.select_for_update().filter(phone=phone).first()
     claim = getattr(user, "claim", None) if user else None
     if (

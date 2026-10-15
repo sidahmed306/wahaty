@@ -51,7 +51,7 @@ class PublicListingSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = fields
 
-    def get_seller_name(self, obj):
+    def get_seller_name(self, obj) -> str:
         return obj.owner.profile.business_name or obj.owner.full_name
 
 
