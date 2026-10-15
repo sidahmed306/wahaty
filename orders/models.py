@@ -166,6 +166,8 @@ class Notification(models.Model):
         DELIVERY_DUE = "delivery_due", "Livraison demain"
         ORDER_LATE = "order_late", "Commande en retard"
         LOW_STOCK = "low_stock", "Stock bas"
+        LISTING_PUBLISHED = "listing_published", "Annonce publiée"
+        LISTING_REJECTED = "listing_rejected", "Annonce refusée"
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
