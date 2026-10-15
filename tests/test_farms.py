@@ -413,3 +413,13 @@ def test_pages_d_administration(client, w, model):
 
     client.force_login(User.objects.create_superuser("46000002", "Oasis-Adrar-2026"))
     assert client.get(f"/admin/farms/{model}/").status_code == 200
+
+
+def test_agent_ne_deplace_pas_une_ligne_vers_un_agriculteur_repris(w):
+    group = PalmGroup.objects.create(farm=w.managed_farm, variety=w.amhat, productive_count=3)
+    response = client_for(w.agent).patch(
+        f"{PALMS}{group.id}/", {"farm": w.claimed_farm.id}, format="json"
+    )
+    assert response.status_code == 403
+    group.refresh_from_db()
+    assert group.farm == w.managed_farm

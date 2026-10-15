@@ -27,11 +27,24 @@ def with_paid_total(customers):
 
 
 def order_stats(customer_ids):
-    """Statistiques de commandes par client (commandes non annulées).
+    """Statistiques de commandes par client.
 
-    Les commandes arrivent à T10 : en attendant, aucun client n'a de commande.
+    - Dates : toutes les commandes **non annulées** (pour le classement).
+    - Total acheté : commandes **livrées** seulement (Q8), comme la dette.
     """
-    return {pk: CustomerStats() for pk in customer_ids}
+    from orders.models import Order, OrderStatus
+
+    stats = {pk: CustomerStats() for pk in customer_ids}
+    rows = (
+        Order.objects.filter(customer_id__in=customer_ids, is_active=True)
+        .exclude(status=OrderStatus.CANCELLED)
+        .values_list("customer_id", "order_date", "status", "total_amount")
+    )
+    for customer_id, order_date, status, total in rows:
+        stats[customer_id].order_dates.append(order_date)
+        if status == OrderStatus.DELIVERED:
+            stats[customer_id].total_purchased += total
+    return stats
 
 
 def enrich(customers, today=None):

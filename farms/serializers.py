@@ -108,11 +108,6 @@ class HarvestSerializer(FarmChildSerializer):
         ]
         read_only_fields = ["created_by", "created_at"]
 
-    def validate_quantity_kg(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("La quantité doit être supérieure à 0.")
-        return value
-
     def validate_harvest_date(self, value):
         if value > timezone.localdate():
             raise serializers.ValidationError("La date de récolte ne peut pas être dans le futur.")

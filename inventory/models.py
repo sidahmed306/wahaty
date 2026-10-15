@@ -169,6 +169,14 @@ class StockMovement(models.Model):
         blank=True,
         related_name="lines",
     )
+    order = models.ForeignKey(
+        "orders.Order",
+        verbose_name="commande",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="stock_movements",
+    )
     movement_date = models.DateTimeField("date", default=timezone.now)
     note = models.TextField("justification", blank=True)
     created_by = models.ForeignKey(

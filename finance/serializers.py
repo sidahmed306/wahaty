@@ -110,6 +110,12 @@ class MonthTotalSerializer(serializers.Serializer):
 class FinanceSummarySerializer(serializers.Serializer):
     date_from = serializers.DateField(allow_null=True)
     date_to = serializers.DateField(allow_null=True)
+    direct_sales_total = serializers.DecimalField(
+        max_digits=16, decimal_places=2, help_text="Ventes directes (agriculteur)."
+    )
+    orders_total = serializers.DecimalField(
+        max_digits=16, decimal_places=2, help_text="Commandes livrées (vendeur)."
+    )
     sales_total = serializers.DecimalField(max_digits=16, decimal_places=2)
     expenses_total = serializers.DecimalField(max_digits=16, decimal_places=2)
     profit = serializers.DecimalField(max_digits=16, decimal_places=2)

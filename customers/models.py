@@ -50,6 +50,14 @@ class Payment(TimeStampedModel):
     customer = models.ForeignKey(
         Customer, verbose_name="client", on_delete=models.PROTECT, related_name="payments"
     )
+    order = models.ForeignKey(
+        "orders.Order",
+        verbose_name="commande concernée",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="payments",
+    )
     payment_date = models.DateField("date de paiement")
     amount = MoneyField("montant (MRU)")
     method = models.CharField(

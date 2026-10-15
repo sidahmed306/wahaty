@@ -368,3 +368,11 @@ def test_pages_d_administration(url):
         PlatformSettings.load()
         assert browser.get(f"{url}add/").status_code == 403
         assert browser.post(f"{url}1/delete/").status_code == 403
+
+
+@pytest.mark.django_db
+def test_client_sans_telephone(client):
+    response = client.post(CUSTOMERS, {"name": "Sans numéro", "phone": ""}, format="json")
+    assert response.status_code == 201
+    assert response.data["phone"] == ""
+    assert client.post(CUSTOMERS, {"name": "Autre", "phone": ""}, format="json").status_code == 201

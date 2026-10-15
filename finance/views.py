@@ -8,6 +8,7 @@ from accounts.models import Role, User
 from core.access import can_read_for, can_write_for, filter_readable, is_direction
 from core.mixins import OwnedQuerysetMixin, SoftDeleteMixin
 from core.permissions import IsDirectionOrReadOnly, OwnerPermission, role_permission
+from orders.models import Order
 
 from .filters import ExpenseFilter, SaleFilter
 from .models import Expense, ExpenseCategory, Sale
@@ -47,9 +48,6 @@ class FinanceRecordViewSet(SoftDeleteMixin, OwnedQuerysetMixin, viewsets.ModelVi
     def get_queryset(self):
         return super().get_queryset().filter(is_active=True)
 
-    def check_owner(self, owner):
-        """Contrôles propres au type de ligne (rôle du propriétaire…)."""
-
     def check_relations(self, owner, data):
         farm = data.get("farm")
         if farm is not None and farm.owner_id != owner.pk:
@@ -59,7 +57,6 @@ class FinanceRecordViewSet(SoftDeleteMixin, OwnedQuerysetMixin, viewsets.ModelVi
         owner = self.get_owner_for_create()
         if not can_write_for(self.request.user, owner):
             raise PermissionDenied("Agriculteur introuvable ou non géré par vous.")
-        self.check_owner(owner)
         self.check_relations(owner, serializer.validated_data)
         serializer.save(owner=owner, created_by=self.request.user)
 
@@ -76,12 +73,9 @@ class SaleViewSet(FinanceRecordViewSet):
 
     queryset = Sale.objects.select_related("variety", "farm")
     serializer_class = SaleSerializer
+    # Le rôle (SalesAccess) et can_write_for garantissent que le propriétaire est agriculteur.
     permission_classes = [SalesAccess, OwnerPermission]
     filterset_class = SaleFilter
-
-    def check_owner(self, owner):
-        if not owner.has_role(Role.FARMER):
-            raise PermissionDenied("Les ventes directes sont réservées aux agriculteurs.")
 
 
 class ExpenseViewSet(FinanceRecordViewSet):
@@ -134,10 +128,13 @@ class FinanceSummaryView(APIView):
         query = params.validated_data
         sales = filter_readable(Sale.objects.all(), request.user)
         expenses = filter_readable(Expense.objects.all(), request.user)
+        orders = filter_readable(Order.objects.all(), request.user)
         if "owner" in query:
             owner = User.objects.filter(pk=query["owner"]).first()
             if not can_read_for(request.user, owner):
                 raise NotFound("Utilisateur introuvable.")
-            sales, expenses = sales.filter(owner=owner), expenses.filter(owner=owner)
-        data = finance_summary(sales, expenses, query.get("date_from"), query.get("date_to"))
+            sales, expenses, orders = (qs.filter(owner=owner) for qs in (sales, expenses, orders))
+        data = finance_summary(
+            sales, expenses, orders, query.get("date_from"), query.get("date_to")
+        )
         return Response(FinanceSummarySerializer(data).data)

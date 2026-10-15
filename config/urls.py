@@ -14,6 +14,7 @@ urlpatterns = [
     path("api/", include("finance.urls")),
     path("api/", include("inventory.urls")),
     path("api/", include("customers.urls")),
+    path("api/", include("orders.urls")),
 ]
 
 if settings.DEBUG:  # pragma: no cover – en local seulement : afficher les photos

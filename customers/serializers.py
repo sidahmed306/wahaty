@@ -3,6 +3,7 @@ from rest_framework import serializers
 from accounts.serializers import clean_phone
 from core.fields import OwnRelatedField, money_field, not_in_future
 from core.models import PlatformSettings
+from orders.models import Order, OrderStatus
 
 from .models import Customer, Payment
 from .segments import Segment
@@ -62,8 +63,20 @@ class CustomerSerializer(serializers.ModelSerializer):
 class PaymentSerializer(serializers.ModelSerializer):
     customer = OwnRelatedField(Customer)
     customer_name = serializers.CharField(source="customer.name", read_only=True)
+    order = OwnRelatedField(Order, required=False, allow_null=True)
     payment_date = serializers.DateField(validators=[not_in_future])
     amount = money_field()
+
+    def validate(self, attrs):
+        order = attrs.get("order")
+        if order is not None:
+            if order.customer_id != attrs["customer"].pk:
+                raise serializers.ValidationError(
+                    {"order": "Cette commande n'est pas celle de ce client."}
+                )
+            if order.status == OrderStatus.CANCELLED:
+                raise serializers.ValidationError({"order": "Cette commande est annulée."})
+        return attrs
 
     class Meta:
         model = Payment
@@ -71,6 +84,7 @@ class PaymentSerializer(serializers.ModelSerializer):
             "id",
             "customer",
             "customer_name",
+            "order",
             "payment_date",
             "amount",
             "method",

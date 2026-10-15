@@ -532,3 +532,23 @@ def test_administration_en_lecture_seule(client, w, model):
     client.force_login(User.objects.create_superuser("46000004", "Oasis-Adrar-2026"))
     assert client.get(f"/admin/inventory/{model}/").status_code == 200
     assert client.get(f"/admin/inventory/{model}/add/").status_code == 403
+
+
+def test_paiement_d_un_achat_annule_refuse(w):
+    small = services.create_purchase(
+        owner=w.vera,
+        supplier=w.other_supplier,
+        purchase_date=date(2026, 9, 5),
+        lines=[{"product": w.amhat, "quantity": D("1"), "unit_cost": D("10")}],
+        user=w.vera,
+    )
+    services.cancel_purchase(small, "erreur", w.vera)
+    payload = {
+        "supplier": w.other_supplier.id,
+        "purchase": small.id,
+        "payment_date": "2026-10-01",
+        "amount": "1",
+    }
+    response = w.client.post(PAYMENTS, payload, format="json")
+    assert response.status_code == 400
+    assert "purchase" in response.data

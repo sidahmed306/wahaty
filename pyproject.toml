@@ -17,7 +17,17 @@ python_files = ["test_*.py", "tests.py"]
 testpaths = ["tests"]
 
 [tool.coverage.run]
-source = ["accounts", "core", "config"]
+source = [
+    "accounts",
+    "core",
+    "config",
+    "oases",
+    "farms",
+    "finance",
+    "inventory",
+    "customers",
+    "orders",
+]
 omit = ["*/migrations/*", "config/asgi.py", "config/wsgi.py"]
 
 [tool.coverage.report]
