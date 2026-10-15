@@ -82,7 +82,7 @@ Le détail pas à pas est dans [docs/deploiement.md](docs/deploiement.md).
 2. **Render** : *New > Blueprint* avec ce dépôt (fichier `render.yaml`), puis coller
    `DATABASE_URL` et `CLOUDINARY_URL` dans Render.
 3. **Cloudflare Pages** : dossier `frontend`, commande `npm run build`, sortie `dist`,
-   variable `VITE_API_URL=https://trc-api.onrender.com`.
+   variable `VITE_API_URL=https://trc-api-l8g7.onrender.com`.
 4. **GitHub** : secret `NEON_DATABASE_URL` pour les rappels quotidiens.
 
 ## Sécurité

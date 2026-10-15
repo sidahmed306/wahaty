@@ -32,12 +32,12 @@ Remplacer `<your_api_key>` et `<your_api_secret>` par les vraies valeurs, sans l
 1. render.com → **New** → **Blueprint** → choisir le dépôt `sidahmed306/wahaty`.
 2. Render lit `render.yaml` et prépare le service `trc-api`.
 3. Coller les 2 secrets demandés : `DATABASE_URL` (Neon) et `CLOUDINARY_URL`.
-4. **Apply**. Après la construction, l'API répond sur `https://trc-api.onrender.com/api/health/`.
+4. **Apply**. Après la construction, l'API répond sur `https://trc-api-l8g7.onrender.com/api/health/`.
 5. Onglet **Shell** du service (ou en local avec `DATABASE_URL` de Neon) :
    - `python manage.py seed_demo` → variétés + oasis (les photos partent chez Cloudinary) ;
    - `python manage.py createsuperuser` → compte Direction.
 
-Si l'adresse du service n'est pas `trc-api.onrender.com`, mettre la vraie adresse dans
+Si l'adresse du service n'est pas `trc-api-l8g7.onrender.com`, mettre la vraie adresse dans
 `CSRF_TRUSTED_ORIGINS` (onglet **Environment**).
 
 ## 4. Cloudflare Pages (site)
@@ -48,7 +48,7 @@ Si l'adresse du service n'est pas `trc-api.onrender.com`, mettre la vraie adress
    - Framework : **Vite** (ou aucun) ;
    - Dossier racine (*Root directory*) : `frontend` ;
    - Commande : `npm run build` ; dossier de sortie : `dist` ;
-   - Variables : `VITE_API_URL=https://trc-api.onrender.com` et `NODE_VERSION=22`.
+   - Variables : `VITE_API_URL=https://trc-api-l8g7.onrender.com` et `NODE_VERSION=22`.
 3. Le site est publié sur `https://<nom>.pages.dev`. Mettre exactement cette adresse dans
    `CORS_ALLOWED_ORIGINS` sur Render (sinon le site ne peut pas appeler l'API).
 
