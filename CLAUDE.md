@@ -12,6 +12,24 @@ Répondre en **français**, avec des explications simples. Ce fichier contient l
 - Schéma de la base validé (T02) : [docs/T02-schema-base.md](docs/T02-schema-base.md). Il fait foi pour les modèles (il remplace la section 5 ci-dessous quand ils diffèrent).
 - Git : commits avec l'adresse noreply GitHub (réglée dans ce dépôt seulement), sinon GitHub refuse le push.
 
+## Décisions avant T14 (15 octobre 2026)
+
+- Frontend hébergé sur **Cloudflare Pages** (pas Vercel : usage commercial). Nom de domaine acheté plus tard → seulement un réglage (CORS) à changer.
+- **Langue par défaut : arabe.** Les messages d'erreur de l'API suivent la langue choisie par l'utilisateur (ar par défaut, fr sinon), via la traduction intégrée de Django (gettext).
+- Connexion : renouvellement du jeton possible pendant **30 jours** (`JWT_REFRESH_DAYS=30`).
+- Photos : **Cloudinary** avec `django-cloudinary-storage` (accepté). `CLOUDINARY_URL` collée par l'utilisateur dans `.env` et sur Render.
+- L'utilisateur enverra les liens du site d'exemple **après T14**.
+
+## Décisions frontend (15 octobre 2026) – T14 mise de côté à la demande de l'utilisateur
+
+- Nom de la plateforme : **TRC** (logo « إرث النخيل – TRC – PRODUCTION TRC », remplace « واحتي »).
+- Design et couleurs : guide « تمور شنقيط » et flyers (vert `#189448`, beige `#dcaf75`, marron `#ae7b59`, dégradés vert→blanc et beige→marron). Fichiers dans ~/Downloads.
+- Polices : Unbounded (latin, gratuite) ; arabe = police **gratuite** ressemblant à Iwan Zaza (licence « personal » interdite sur le site).
+- Les 9 produits du flyer (dont مفصص, كسور, عسل التمر) sont des **variétés de dattes**.
+- Photos : reprises des flyers (images d'environ 600 px par datte).
+- Contact WhatsApp 47826859 en bas de toutes les pages.
+- Site pensé d'abord pour le smartphone. Rien sans la permission de l'utilisateur.
+
 ---
 
 # Cahier des charges technique – Wahaty
