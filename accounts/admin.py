@@ -85,10 +85,19 @@ class UserAdmin(BaseUserAdmin):
 
     @admin.action(description="Valider les comptes sélectionnés")
     def approve_accounts(self, request, queryset):
-        count = queryset.update(status=AccountStatus.APPROVED)
+        count = self._set_status(queryset, AccountStatus.APPROVED)
         self.message_user(request, f"{count} compte(s) validé(s).", messages.SUCCESS)
 
     @admin.action(description="Suspendre les comptes sélectionnés")
     def suspend_accounts(self, request, queryset):
-        count = queryset.exclude(pk=request.user.pk).update(status=AccountStatus.SUSPENDED)
+        count = self._set_status(queryset.exclude(pk=request.user.pk), AccountStatus.SUSPENDED)
         self.message_user(request, f"{count} compte(s) suspendu(s).", messages.WARNING)
+
+    @staticmethod
+    def _set_status(queryset, status):
+        # Un par un (et non queryset.update) : chaque changement passe par le journal d'audit.
+        users = list(queryset)
+        for user in users:
+            user.status = status
+            user.save(update_fields=["status", "updated_at"])
+        return len(users)

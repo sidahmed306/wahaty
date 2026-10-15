@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from django.db.models import OuterRef, Subquery, Sum
+from django.db.models import F, OuterRef, Subquery, Sum
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 
@@ -24,6 +24,25 @@ def with_paid_total(customers):
         .values("total")
     )
     return customers.annotate(paid_total=Coalesce(Subquery(paid), ZERO))
+
+
+def with_balance(customers):
+    """Ajoute `delivered_total`, `paid_total` et `balance` (dette) par sous-requêtes :
+    pour additionner les dettes de beaucoup de clients sans les charger un par un."""
+    from orders.models import Order, OrderStatus
+
+    delivered = (
+        Order.objects.filter(customer=OuterRef("pk"), is_active=True, status=OrderStatus.DELIVERED)
+        .order_by()
+        .values("customer")
+        .annotate(total=Sum("total_amount"))
+        .values("total")
+    )
+    return (
+        with_paid_total(customers)
+        .annotate(delivered_total=Coalesce(Subquery(delivered), ZERO))
+        .annotate(balance=F("delivered_total") - F("paid_total"))
+    )
 
 
 def order_stats(customer_ids):

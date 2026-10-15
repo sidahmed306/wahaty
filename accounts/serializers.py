@@ -1,4 +1,5 @@
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.signals import user_logged_in
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import (
@@ -71,6 +72,10 @@ class PhoneTokenObtainPairSerializer(TokenObtainPairSerializer):
             pass  # numéro mal écrit : l'authentification échouera normalement (401)
         data = super().validate(attrs)
         check_account_status(self.user)
+        # Signal standard de Django : met à jour last_login et inscrit la connexion au journal.
+        user_logged_in.send(
+            sender=self.user.__class__, request=self.context.get("request"), user=self.user
+        )
         return data
 
 

@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     "orders",
     "invoices",
     "market",
+    "audit",
+    "dashboard",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "audit.recorder.AuditMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -129,7 +132,8 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=env.int("JWT_REFRESH_DAYS", default=7)),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
-    "UPDATE_LAST_LOGIN": True,
+    # last_login est mis à jour par le signal user_logged_in (voir accounts/serializers.py).
+    "UPDATE_LAST_LOGIN": False,
 }
 
 

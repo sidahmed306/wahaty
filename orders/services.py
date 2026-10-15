@@ -43,8 +43,12 @@ def _set_items(order, items):
     )
 
 
-def _recompute_totals(order):
-    order.subtotal = sum((i.line_total for i in order.items.all()), ZERO)
+def _recompute_totals(order, items=None):
+    """Totaux à partir des lignes en base, ou des lignes `items` pas encore enregistrées."""
+    if items is None:
+        order.subtotal = sum((i.line_total for i in order.items.all()), ZERO)
+    else:
+        order.subtotal = sum((round_money(i["quantity"] * i["unit_price"]) for i in items), ZERO)
     total = order.subtotal + order.delivery_fee - order.discount
     if total < 0:
         raise OrderError("La remise est plus grande que le montant de la commande.")
@@ -62,12 +66,11 @@ def create_order(owner, customer, items, user, **fields):
     # Verrou sur le vendeur : deux commandes simultanées n'auront pas le même numéro.
     User.objects.select_for_update().get(pk=owner.pk)
     number = f"CMD-{Order.objects.filter(owner=owner).count() + 1:04d}"
-    order = Order.objects.create(
-        owner=owner, customer=customer, number=number, created_by=user, **fields
-    )
+    order = Order(owner=owner, customer=customer, number=number, created_by=user, **fields)
+    # Totaux calculés avant d'enregistrer : une seule écriture (et une seule ligne au journal).
+    _recompute_totals(order, items)
+    order.save()
     _set_items(order, items)
-    _recompute_totals(order)
-    order.save(update_fields=["subtotal", "total_amount", "updated_at"])
     _history(order, "", OrderStatus.RECEIVED, user)
     return order
 
