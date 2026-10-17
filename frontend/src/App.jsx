@@ -6,6 +6,7 @@ import Layout from './components/Layout'
 import { Loader } from './components/ui'
 import { Claim, Login, Register } from './pages/auth/AuthPages'
 import Home from './pages/public/Home'
+import Install from './pages/public/Install'
 import Market, { ListingDetail } from './pages/public/Market'
 import Oases, { OasisDetail } from './pages/public/Oases'
 import Varieties, { VarietyDetail } from './pages/public/Varieties'
@@ -66,6 +67,7 @@ export default function App() {
         <Route path="oasis/:slug" element={<OasisDetail />} />
         <Route path="marche" element={<Market />} />
         <Route path="marche/:id" element={<ListingDetail />} />
+        <Route path="installer" element={<Install />} />
         <Route path="connexion" element={<Login />} />
         <Route path="inscription" element={<Register />} />
         <Route path="reprise" element={<Claim />} />

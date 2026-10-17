@@ -7,6 +7,7 @@ import { registerSW } from 'virtual:pwa-register'
 import App from './App'
 import { AuthProvider } from './auth/AuthProvider'
 import './i18n'
+import './lib/install' // écoute tout de suite la proposition d'installation du navigateur
 import './styles/global.css'
 
 // Application installée : dès qu'une nouvelle version est en ligne, la page se recharge seule.

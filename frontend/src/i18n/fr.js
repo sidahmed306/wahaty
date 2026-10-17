@@ -57,6 +57,29 @@ export default {
     tooMany: 'Trop de tentatives. Attendez une minute puis réessayez.',
     waking: 'Le serveur se réveille après une pause… cela peut prendre une minute. Ne fermez pas la page.',
   },
+  install: {
+    short: 'Installer l’app',
+    title: 'Installez l’application TRC sur votre téléphone',
+    intro: 'Mettez Irth En-Nakhil sur l’écran d’accueil et ouvrez-le d’un geste, comme une application.',
+    button: 'Installer l’application',
+    done: 'Installée ! L’icône TRC est sur votre écran d’accueil.',
+    already: 'L’application est installée et ouverte depuis l’écran d’accueil. ✓',
+    free: 'Gratuit, sans App Store ni Play Store, et toujours à jour automatiquement.',
+    androidTitle: 'Sur Android (Chrome)',
+    android: [
+      'Ouvrez wahaty.pages.dev dans Chrome.',
+      'Appuyez sur les trois points ⋮ en haut de l’écran.',
+      'Choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil ».',
+      'Appuyez sur « Installer » : l’icône TRC apparaît parmi vos applications.',
+    ],
+    iosTitle: 'Sur iPhone (Safari)',
+    ios: [
+      'Ouvrez wahaty.pages.dev dans Safari (pas depuis WhatsApp ou Facebook).',
+      'Appuyez sur le bouton Partager ⬆️ en bas de l’écran.',
+      'Descendez et choisissez « Sur l’écran d’accueil ».',
+      'Appuyez sur « Ajouter » en haut : l’icône TRC apparaît sur l’écran.',
+    ],
+  },
   home: {
     tagline: 'La plateforme « Irth En-Nakhil » – une réalisation de Chinguitti Dates (تمور شنقيط)',
     subtitle:

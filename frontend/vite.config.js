@@ -8,9 +8,10 @@ const BACKEND = 'http://127.0.0.1:8000'
 const pwa = VitePWA({
   registerType: 'autoUpdate',
   injectRegister: false, // enregistré dans main.jsx : rechargement automatique à chaque nouvelle version
-  includeAssets: ['favicon.png', 'apple-touch-icon.png', 'logo-mark.webp'],
+  includeAssets: ['favicon.png', 'apple-touch-icon.png', 'logo-mark.webp', 'icon-192.png'],
   manifest: {
     name: 'TRC إرث النخيل',
+    id: '/',
     short_name: 'TRC',
     description: 'تمور واحات آدرار – Les dattes des oasis de l’Adrar',
     lang: 'ar',

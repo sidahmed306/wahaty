@@ -119,6 +119,10 @@ export function Footer() {
             <PhoneIcon />
             <span>{t('footer.call')}</span>
           </a>
+          <Link className="contact-pill" to="/installer">
+            <img src="/favicon.png" alt="" width="22" height="22" style={{ borderRadius: 6 }} />
+            <span>{t('install.short')}</span>
+          </Link>
         </div>
         <div className="muted small">
           © {new Date().getFullYear()} TRC — {t('footer.rights')}
