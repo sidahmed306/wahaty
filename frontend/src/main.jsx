@@ -3,10 +3,14 @@ import '@fontsource-variable/unbounded'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
+import { registerSW } from 'virtual:pwa-register'
 import App from './App'
 import { AuthProvider } from './auth/AuthProvider'
 import './i18n'
 import './styles/global.css'
+
+// Application installée : dès qu'une nouvelle version est en ligne, la page se recharge seule.
+registerSW({ immediate: true })
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

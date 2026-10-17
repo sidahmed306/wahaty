@@ -9,6 +9,43 @@ let language = 'ar'
 let onLogout = () => {}
 let refreshing = null
 
+// Serveur gratuit endormi : la 1re réponse peut prendre ~1 minute. On prévient l'utilisateur
+// après quelques secondes au lieu de laisser un bouton « en recherche » sans explication.
+export const SLOW_AFTER_MS = 4000
+export const TIMEOUT_MS = 100000
+let slowCount = 0
+const slowListeners = new Set()
+
+export function onSlowChange(listener) {
+  slowListeners.add(listener)
+  return () => slowListeners.delete(listener)
+}
+
+function setSlow(delta) {
+  slowCount += delta
+  slowListeners.forEach((listener) => listener(slowCount > 0))
+}
+
+/** fetch avec délai maximum et signal « lent » pendant l'attente. */
+async function timedFetch(url, options) {
+  const controller = new AbortController()
+  let slow = false
+  const slowTimer = setTimeout(() => {
+    slow = true
+    setSlow(1)
+  }, SLOW_AFTER_MS)
+  const stopTimer = setTimeout(() => controller.abort(), TIMEOUT_MS)
+  try {
+    return await fetch(url, { ...options, signal: controller.signal })
+  } catch {
+    throw new ApiError(0, null) // réseau coupé ou serveur sans réponse
+  } finally {
+    clearTimeout(slowTimer)
+    clearTimeout(stopTimer)
+    if (slow) setSlow(-1)
+  }
+}
+
 export class ApiError extends Error {
   constructor(status, data) {
     super(firstMessage(data) || `HTTP ${status}`)
@@ -103,7 +140,7 @@ function buildQuery(params) {
 async function refreshAccess() {
   const refresh = tokens.refresh
   if (!refresh) return false
-  refreshing ??= fetch(apiUrl('/api/auth/refresh/'), {
+  refreshing ??= timedFetch(apiUrl('/api/auth/refresh/'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept-Language': language },
     body: JSON.stringify({ refresh }),
@@ -143,7 +180,7 @@ export async function api(path, { method = 'GET', body, params, auth = true, raw
     }
     const access = auth ? tokens.access : null
     if (access) headers.Authorization = `Bearer ${access}`
-    return fetch(apiUrl(path) + buildQuery(params), { method, headers, body: payload })
+    return timedFetch(apiUrl(path) + buildQuery(params), { method, headers, body: payload })
   }
 
   let response = await send()

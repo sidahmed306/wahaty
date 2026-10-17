@@ -1161,3 +1161,31 @@ table.simple th {
   display: grid;
   gap: 16px;
 }
+
+/* ---------- Serveur qui se réveille ---------- */
+
+.wake-banner {
+  position: fixed;
+  inset-inline: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--brown-dark);
+  color: var(--white);
+  box-shadow: var(--shadow);
+  font-weight: 500;
+}
+
+.loader-dot {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-top-color: var(--white);
+  animation: spin 0.8s linear infinite;
+}

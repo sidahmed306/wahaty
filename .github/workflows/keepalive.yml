@@ -1,0 +1,18 @@
+# Garde le serveur Render éveillé : l'offre gratuite s'endort après 15 min sans visite, et le
+# 1er visiteur attend alors ~1 minute. Une petite visite toutes les 10 minutes l'en empêche.
+# Coût : 0 (GitHub Actions est gratuit pour un dépôt public ; Render donne 750 h/mois, un mois
+# entier allumé = 744 h au plus). GitHub peut retarder ces visites de quelques minutes.
+name: Garder le serveur éveillé
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Visite de /api/health/
+        run: curl --silent --show-error --max-time 120 --retry 2 https://trc-api-l8g7.onrender.com/api/health/

@@ -55,6 +55,7 @@ export default {
     notFound: 'Cette page n’existe pas ou plus.',
     notFoundTitle: 'Page introuvable',
     tooMany: 'Trop de tentatives. Attendez une minute puis réessayez.',
+    waking: 'Le serveur se réveille après une pause… cela peut prendre une minute. Ne fermez pas la page.',
   },
   home: {
     subtitle: 'Dattes 100 % naturelles des oasis de l’Adrar : variétés, oasis et marché en ligne.',

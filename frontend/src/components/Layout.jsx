@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, NavLink, Outlet, useLocation } from 'react-router'
+import { onSlowChange } from '../api/client'
 import { useAuth } from '../auth/AuthProvider'
 import { CONTACT_DISPLAY, whatsappLink } from '../config'
 import { CloseIcon, MenuIcon, PhoneIcon, WhatsAppIcon } from './Icons'
@@ -127,6 +128,20 @@ export function Footer() {
   )
 }
 
+/** Bandeau affiché quand le serveur tarde (serveur gratuit qui se réveille). */
+export function WakeBanner() {
+  const { t } = useTranslation()
+  const [slow, setSlow] = useState(false)
+  useEffect(() => onSlowChange(setSlow), [])
+  if (!slow) return null
+  return (
+    <div className="wake-banner" role="status">
+      <span className="loader-dot" aria-hidden="true" />
+      {t('errors.waking')}
+    </div>
+  )
+}
+
 export default function Layout() {
   const { pathname } = useLocation()
   useEffect(() => {
@@ -142,6 +157,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <Footer />
+      <WakeBanner />
     </>
   )
 }

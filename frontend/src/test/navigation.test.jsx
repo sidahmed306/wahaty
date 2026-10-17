@@ -61,3 +61,38 @@ it('Direction : on passe d’une rubrique à l’autre', async () => {
     await waitFor(() => expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(title))
   }
 })
+
+it('serveur lent : un message explique l’attente, puis disparaît', async () => {
+  const { act, render } = await import('@testing-library/react')
+  const { api, SLOW_AFTER_MS } = await import('../api/client')
+  const { WakeBanner } = await import('../components/Layout')
+  const { vi } = await import('vitest')
+  vi.useFakeTimers()
+  let answer
+  vi.stubGlobal('fetch', vi.fn(() => new Promise((resolve) => (answer = resolve))))
+  render(<WakeBanner />)
+  const call = api('/api/health/', { auth: false })
+  expect(screen.queryByRole('status')).toBeNull()
+  await act(async () => vi.advanceTimersByTime(SLOW_AFTER_MS + 10))
+  expect(screen.getByRole('status')).toHaveTextContent('الخادم يستيقظ')
+  await act(async () => answer(new Response('{"status":"ok"}', { status: 200, headers: { 'Content-Type': 'application/json' } })))
+  await call
+  expect(screen.queryByRole('status')).toBeNull()
+  vi.useRealTimers()
+})
+
+it('serveur sans réponse : arrêt au bout du délai avec un message clair', async () => {
+  const { api, ApiError, TIMEOUT_MS } = await import('../api/client')
+  const { vi } = await import('vitest')
+  vi.useFakeTimers()
+  vi.stubGlobal(
+    'fetch',
+    vi.fn((url, { signal }) => new Promise((_, reject) => signal.addEventListener('abort', () => reject(new Error('abort'))))),
+  )
+  const call = api('/api/health/', { auth: false })
+  vi.advanceTimersByTime(TIMEOUT_MS + 10)
+  const error = await call.catch((e) => e)
+  expect(error).toBeInstanceOf(ApiError)
+  expect(error.status).toBe(0) // affiché : « تعذّر الاتصال بالخادم… »
+  vi.useRealTimers()
+})

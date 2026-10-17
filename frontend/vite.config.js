@@ -7,6 +7,7 @@ const BACKEND = 'http://127.0.0.1:8000'
 
 const pwa = VitePWA({
   registerType: 'autoUpdate',
+  injectRegister: false, // enregistré dans main.jsx : rechargement automatique à chaque nouvelle version
   includeAssets: ['favicon.png', 'apple-touch-icon.png', 'logo-mark.webp'],
   manifest: {
     name: 'TRC إرث النخيل',
@@ -25,6 +26,10 @@ const pwa = VitePWA({
     ],
   },
   workbox: {
+    // Nouvelle version : elle remplace tout de suite l'ancienne (pas de vieux code gardé en mémoire).
+    skipWaiting: true,
+    clientsClaim: true,
+    cleanupOutdatedCaches: true,
     navigateFallback: '/index.html',
     navigateFallbackDenylist: [/^\/api\//, /^\/admin\//, /^\/media\//],
     globPatterns: ['**/*.{js,css,html,png,webp,woff2}'],
