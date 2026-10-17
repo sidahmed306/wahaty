@@ -480,36 +480,41 @@ html[dir='ltr'] .angled-line {
 
 /* ---------- Page d'accueil ---------- */
 
+/* Couverture : le logo TRC sur fond crème (comme l'image de marque), texte centré. */
 .hero {
-  position: relative;
-  min-height: 72vh;
-  display: flex;
-  align-items: flex-end;
-  color: var(--white);
-  background:
-    linear-gradient(180deg, rgba(13, 59, 32, 0.15) 0%, rgba(13, 59, 32, 0.85) 100%),
-    url('/oasis.webp') center / cover no-repeat;
+  background: radial-gradient(ellipse at 50% 35%, #fbf8f1 0%, #f4efe3 60%, #efe6d4 100%);
+  border-bottom: 1px solid #eadfcd;
+  text-align: center;
 }
 
 .hero .content {
-  padding-block: 64px 48px;
+  padding-block: 28px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.hero h1 {
-  color: var(--white);
-  font-size: clamp(2.2rem, 9vw, 4rem);
+.hero-logo {
+  width: min(78vw, 380px);
+  height: auto;
+}
+
+.hero .tagline {
+  margin: 18px 0 6px;
+  font-size: clamp(1.15rem, 4.6vw, 1.5rem);
+  font-weight: 700;
+  color: #22401f;
 }
 
 .hero .subtitle {
-  font-size: 1.15rem;
-  max-width: 34em;
-  color: #eaf6ee;
+  font-size: 1.05rem;
+  max-width: 36em;
+  color: var(--text-soft);
+  margin-bottom: 20px;
 }
 
-.hero .logo-mark {
-  width: 90px;
-  margin-bottom: 8px;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+.hero .btn-row {
+  justify-content: center;
 }
 
 .section {

@@ -250,3 +250,11 @@ describe('application complète', () => {
     expect(await screen.findByText('Datte jaune au goût royal')).toBeInTheDocument()
   })
 })
+
+describe('accueil : variétés aux vraies photos en premier', () => {
+  it('ordre salmedina, hmar, bjeira puis les autres', async () => {
+    const { featured } = await import('../pages/public/Home')
+    const list = ['anzar', 'bjeira', 'hmar', 'sekani', 'salmedina'].map((slug) => ({ slug }))
+    expect(featured(list).map((v) => v.slug)).toEqual(['salmedina', 'hmar', 'bjeira', 'anzar', 'sekani'])
+  })
+})

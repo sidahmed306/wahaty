@@ -6,6 +6,14 @@ import { localized } from '../../lib/format'
 import { useFetch } from '../../lib/useFetch'
 import { ListingCard } from './Market'
 
+// Variétés avec de vraies photos TRC : montrées en premier sur l'accueil.
+const FEATURED = ['salmedina', 'hmar', 'bjeira']
+export const featured = (list) =>
+  [...list].sort((a, b) => {
+    const rank = (v) => (FEATURED.includes(v.slug) ? FEATURED.indexOf(v.slug) : FEATURED.length)
+    return rank(a) - rank(b)
+  })
+
 export default function Home() {
   const { t, i18n } = useTranslation()
   const lang = i18n.language
@@ -18,8 +26,15 @@ export default function Home() {
     <>
       <section className="hero">
         <div className="container content">
-          <img className="logo-mark" src="/logo-mark.webp" alt="" />
-          <h1 lang="ar">إرث النخيل</h1>
+          <h1 className="visually-hidden">TRC – إرث النخيل</h1>
+          <img
+            className="hero-logo"
+            src="/logo-full.webp"
+            alt="إرث النخيل – TRC – PRODUCTION TRC"
+            width="788"
+            height="710"
+          />
+          <p className="tagline">{t('home.tagline')}</p>
           <p className="subtitle">{t('home.subtitle')}</p>
           <div className="btn-row">
             <Link className="btn btn-sand" to="/varietes">
@@ -35,9 +50,9 @@ export default function Home() {
       <section className="section container">
         <div className="grid-2">
           <div>
-            <SectionTitle kicker="TRC" title={t('home.aboutTitle')} />
+            <SectionTitle kicker={t('home.aboutKicker')} title={t('home.aboutTitle')} />
             <p style={{ fontSize: '1.1rem' }}>{t('home.about')}</p>
-            <p className="muted">{t('home.about2')}</p>
+            <p>{t('home.about2')}</p>
           </div>
           <div className="band-sand">
             <h2>{t('home.joinTitle')}</h2>
@@ -57,7 +72,7 @@ export default function Home() {
       <section className="section container">
         <SectionTitle kicker="Variétés · أنواع" title={t('home.varietiesTitle')} />
         <div className="grid">
-          {asList(varieties.data)
+          {featured(asList(varieties.data))
             .slice(0, 6)
             .map((v) => (
               <Link key={v.id} to={`/varietes/${v.slug}`} className="variety-card">

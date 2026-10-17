@@ -3,6 +3,8 @@
     python manage.py seed_varieties            # textes + photos manquantes
     python manage.py seed_varieties --photos   # remplace aussi les photos existantes
 
+Les photos de سلمدينة، الحمر et بجيره sont de vraies photos TRC (17 octobre 2026).
+
 Peut être relancée sans risque : une variété déjà présente (même nom arabe) est mise à jour.
 Les mois de maturité sont une première estimation (saison de la guetna) à corriger dans
 l'administration si besoin ; les produits transformés sont disponibles toute l'année.
@@ -27,8 +29,8 @@ VARIETIES = [
         "name_fr": "Salmedina",
         "months": GUETNA,
         "description_ar": (
-            "من أجود أنواع التمور، تتميز بمذاق فريد وشهير بين الناس، إنها تقول: "
-            "«سلّمني ألا أعلّ إلّي ما يعرفني، أمّا لي يعرفني دور يجيني»."
+            "من أجود أنواع التمور، تتميز بمذاق فريد وشهير بين الناس انها تقول : "
+            '"سَلّملي ألا أعلّ إِلّي ما يَعرفني. أمَا ليَ يَعرفني دور يجيني"'
         ),
         "description_fr": (
             "L'une des meilleures dattes, au goût unique et réputé. Le dicton lui fait dire : "
@@ -71,7 +73,7 @@ VARIETIES = [
         "name_fr": "Bjeira",
         "months": GUETNA,
         "description_ar": (
-            "بلون أصفر مميز، تُعرف بـ«نخلة العيال الشناقطة». كانت مؤونة الشتاء قديمًا، "
+            'بلون أصفر مميز، تُعرف ب"نخلة العيال الشناقطة"، كانت مؤونة الشتاء قديمًا، '
             "تمنح الدفء والطاقة."
         ),
         "description_fr": (

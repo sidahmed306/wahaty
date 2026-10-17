@@ -58,14 +58,17 @@ export default {
     waking: 'Le serveur se réveille après une pause… cela peut prendre une minute. Ne fermez pas la page.',
   },
   home: {
-    subtitle: 'Dattes 100 % naturelles des oasis de l’Adrar : variétés, oasis et marché en ligne.',
+    tagline: 'La plateforme « Irth En-Nakhil » – une réalisation de Chinguitti Dates (تمور شنقيط)',
+    subtitle:
+      'Une plateforme nationale pour soutenir le secteur des oasis : elle réunit les oasis et les vendeurs de dattes, fait connaître les agriculteurs et les relie aux commerçants, pour préserver l’héritage du palmier.',
     seeVarieties: 'Découvrir nos dattes',
     seeMarket: 'Aller au marché',
+    aboutKicker: 'Chinguitti Dates · TRC',
     aboutTitle: 'Qui sommes-nous ?',
     about:
-      'TRC – إرث النخيل réunit les agriculteurs, les vendeurs et les amateurs de dattes des oasis de l’Adrar : Atar, Chinguetti, Ouadane, Aoujeft…',
+      'Les dattes de Chinguitti sont 100 % naturelles : cultivées et conditionnées dans la ville historique de Chinguetti, au nord de la Mauritanie, parmi des palmiers anciens et sur une terre pure, sans aucun additif ni conservateur.',
     about2:
-      'Des dattes sans additifs ni conservateurs, au goût authentique et à la grande valeur nutritive, cultivées sous des palmiers centenaires et une terre pure.',
+      'Une entreprise nationale basée à Chinguetti, construite autour de deux axes : faire connaître le produit local en documentant les variétés de dattes et leur valeur nutritive, et développer le secteur des oasis en améliorant la qualité et la commercialisation, pour préserver l’héritage du palmier et aider les agriculteurs à offrir la datte mauritanienne au consommateur sous son meilleur jour.',
     joinTitle: 'Agriculteur ou vendeur ?',
     joinText: 'Gérez votre ferme, votre stock, vos clients et vos commandes, et publiez vos annonces sur le marché.',
     varietiesTitle: 'Nos variétés de dattes',
